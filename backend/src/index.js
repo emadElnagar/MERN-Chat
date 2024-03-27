@@ -9,10 +9,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://127.0.0.1:27017/chat', (err) => {
-  if (err) {
-    console.log(err);
-  }
-});
+mongoose.connect('mongodb://127.0.0.1:27017/chat').catch(error => console.log(error));
 
 app.listen(port);
