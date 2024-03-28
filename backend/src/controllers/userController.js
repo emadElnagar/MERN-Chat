@@ -29,7 +29,7 @@ export const userRegister = async (req, res) => {
     password: await bcrypt.hash(req.body.password, 10),
   });
   const token = generateToken(user);
-  user.save().then(user => {
+  user.save().then(_user => {
     res.status(200).json({
       token
     });
@@ -54,10 +54,22 @@ export const userLogin = async (req, res) => {
 }
 
 // Get all users
-export const GetAllUsers = async (req, res) => {
+export const GetAllUsers = async (_req, res) => {
   try {
     const users = await User.find();
     res.status(200).json(users);
+  } catch (error) {
+    res.status(401).json({
+      message: error.message
+    });
+  }
+}
+
+// Get single users
+export const GetSingleUser = async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.params._id });
+    res.status(200).json(user);
   } catch (error) {
     res.status(401).json({
       message: error.message
