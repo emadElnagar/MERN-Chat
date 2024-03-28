@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { 
+  DeleteUser,
   GetAllUsers, 
   GetSingleUser, 
   userLogin, 
@@ -19,5 +20,8 @@ userRouter.get('/all', GetAllUsers);
 
 // Get single user
 userRouter.get('/profile/:id', GetSingleUser);
+
+// Delete user
+userRouter.delete('/:id/delete', DeleteUser);
 
 export default userRouter;

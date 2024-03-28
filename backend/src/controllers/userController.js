@@ -76,3 +76,16 @@ export const GetSingleUser = async (req, res) => {
     });
   }
 }
+
+// Delete user
+export const DeleteUser = async (req, res) => {
+  User.deleteOne({ _id: req.params.id }).then(_result => {
+    res.status(201).json({
+      message: "User Deleted Successfully"
+    });
+  }).catch(error => {
+    res.status(401).json({
+      message: "Error Deleting User" + error.message
+    });
+  });
+}
