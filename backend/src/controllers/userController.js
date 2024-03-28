@@ -39,3 +39,16 @@ export const userRegister = async (req, res) => {
     });
   });
 }
+
+// User login
+export const userLogin = async (req, res) => {
+  const user = await User.findOne({ userName: req.body.userName });
+  if (user) {
+    if (bcrypt.compareSync(req.body.password, user.password)){
+      const token = generateToken(user);
+      res.status(200).json({
+        token
+      });
+    }
+  }
+}
