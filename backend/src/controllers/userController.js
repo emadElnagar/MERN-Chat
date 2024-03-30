@@ -49,8 +49,10 @@ export const userLogin = async (req, res) => {
       res.status(200).json({
         token
       });
+      return;
     }
   }
+  res.status(401).send({ message: 'invalid email or password' });
 }
 
 // Get all users
