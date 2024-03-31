@@ -13,6 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -35,6 +40,12 @@ h1 {
   line-height: 1.1;
 }
 
+.heading {
+  text-align: center;
+  text-transform: capitalize;
+  margin-bottom: 40px;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -52,6 +63,63 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.container {
+  margin: auto;
+  @media (min-width:1200px) {
+    width: 1140px;
+  }
+  @media (max-width:1199px) {
+    width: 960px;
+  }
+  @media (max-width:991px) {
+    width: 720px;
+  }
+  @media (max-width:767px) {
+    width: 540px;
+  }
+  @media (max-width:576px) {
+    max-width: 100%;
+  }  
+}
+
+.auth-form {
+  width: 500px;
+  margin: auto;
+  padding: 40px 10px;
+  box-shadow: 0 0 5px #888888;
+  .field {
+    display: flex;
+    flex-direction: row;
+    &.multiple {
+      @media (min-width:577px) {
+        justify-content: space-between;
+        input {
+          width: 48%;
+        }
+      }
+      
+    }
+    input {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    @media (max-width:576px) {
+      flex-direction: column;
+    }
+  }
+  @media (max-width:576px) {
+    max-width: 100%;
+  }
+}
+
+.fullwidth {
+  width: 100%;
+}
+
+input {
+  padding: 10px 5px;
 }
 
 @media (prefers-color-scheme: light) {

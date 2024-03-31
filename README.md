@@ -6,4 +6,3 @@ A real time chat app to send and receive message from friends
 * MongoDB
 * React
 * Vite
-* Chakra ui
