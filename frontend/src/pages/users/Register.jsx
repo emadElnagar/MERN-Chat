@@ -11,17 +11,17 @@ const RegisterPage = () => {
         <form className='auth-form'>
           <h3 className='heading'>register</h3>
           <div className='field multiple'>
-            <input type='text' placeholder='first name' />
-            <input type='text' placeholder='last name' />
+            <input type='text' placeholder='first name' required />
+            <input type='text' placeholder='last name' required />
           </div>
           <div className='field'>
-            <input type='text' placeholder='user name' />
+            <input type='text' placeholder='user name' required />
           </div>
           <div className='field'>
-            <input type='password' placeholder='password' />
+            <input type='password' placeholder='password' required />
           </div>
           <div className='field'>
-            <input type='password' placeholder='re enter password' />
+            <input type='password' placeholder='re enter password' required />
           </div>
           <input className='fullwidth' type='submit' value='register' />
           <p>have an account? <Link to='/users/login'>login</Link></p>

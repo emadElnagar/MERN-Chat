@@ -15,7 +15,7 @@ const LoginPage = () => {
         <form className='auth-form'>
           <h3 className='heading'>login</h3>
           <div className='field'>
-            <input type="text" placeholder='user name' />
+            <input type="text" placeholder='user name' required />
           </div>
           <div className='field password-field'>
             {
@@ -23,7 +23,7 @@ const LoginPage = () => {
               ? <BiSolidShow onClick={() => setIsShow(true)} className="password-icon" />
               : <BiSolidHide onClick={() => setIsShow(false)} className="password-icon" />
             }
-            <input type={`${isShow === false ? 'password' : 'text'}`} placeholder='password' />
+            <input type={`${isShow === false ? 'password' : 'text'}`} placeholder='password' required />
           </div>
           <input className='fullwidth' type='submit' value='login' />
           <p>have no account on LiveTalk ? <Link to='/users/register'>register</Link></p>
