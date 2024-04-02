@@ -1,5 +1,8 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
+import JWT from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Generate Token
 const generateToken = (user) => {
@@ -25,7 +28,7 @@ export const userRegister = async (req, res) => {
   const user = new User({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
-    userName: req.body.userName,
+    email: req.body.email,
     password: await bcrypt.hash(req.body.password, 10),
   });
   const token = generateToken(user);
@@ -42,7 +45,7 @@ export const userRegister = async (req, res) => {
 
 // User login
 export const userLogin = async (req, res) => {
-  const user = await User.findOne({ userName: req.body.userName });
+  const user = await User.findOne({ email: req.body.email });
   if (user) {
     if (bcrypt.compareSync(req.body.password, user.password)){
       const token = generateToken(user);
