@@ -25,6 +25,18 @@ export const SignUp = createAsyncThunk("users/register", async (user, { rejectWi
   }
 });
 
+// User login
+export const Login = createAsyncThunk("users/login", async (user, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(`${url}/login`, user);
+    const data = jwtDecode(response.data.token);
+    sessionStorage.setItem('userInfo', JSON.stringify(data));
+    return data;
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -41,6 +53,18 @@ const userSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(SignUp.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // User login
+      .addCase(Login.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(Login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(Login.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       })
