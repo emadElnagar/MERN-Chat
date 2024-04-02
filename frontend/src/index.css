@@ -144,6 +144,15 @@ input[type='submit'], button, a {
   right: 10px;
 }
 
+.error-box {
+  color: #a02020;
+  background-color: #ffe0e0;
+  border: 1px solid currentColor;
+  width: 500px;
+  padding: 0 10px;
+  margin: 10px auto;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
