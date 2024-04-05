@@ -19,10 +19,10 @@ const generateToken = (user) => {
 
 // User register
 export const userRegister = async (req, res) => {
-  const takenUserName = await User.findOne({ userName: req.body.userName });
-  if (takenUserName) {
+  const takenEmail = await User.findOne({ email: req.body.email });
+  if (takenEmail) {
     res.status(401).json({
-      message: 'This user name have already taken, please try another one'
+      message: 'This email have already taken, please try another one'
     });
   }
   const user = new User({
