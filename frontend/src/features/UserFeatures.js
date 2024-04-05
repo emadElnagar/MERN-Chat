@@ -37,6 +37,11 @@ export const Login = createAsyncThunk("users/login", async (user, { rejectWithVa
   }
 });
 
+// User logout
+export const Logout = createAsyncThunk("users/logout", async () => {
+  sessionStorage.removeItem('userInfo');
+});
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -67,6 +72,14 @@ const userSlice = createSlice({
       .addCase(Login.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
+      })
+      // User logout
+      .addCase(Logout.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(Logout.fulfilled, (state) => {
+        state.isLoading = false;
+        state.user = null;
       })
   }
 });
