@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom"
@@ -12,6 +12,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const { user, profile, isLoading } = useSelector((state) => state.user);
   const { id } = useParams();
+  const [image, setImage] = useState('');
   useEffect(() => {
     dispatch(GetSingleUser(id));
   }, [dispatch, id]);
@@ -28,16 +29,16 @@ const Profile = () => {
           isLoading ? <LoadingScreen /> :
           profile &&
           <div className="img-container">  
-            <div className="image">  
+            <div className="image">
               <img
-                src={`${profile.image ? profile.image : UserAvatar}`} 
+                src={`${image ? URL.createObjectURL(image) : profile.image ? profile.image : UserAvatar}`} 
                 alt="user avatar"
                 className="profile-img"
               />
               {
                 user && user._id === profile._id &&
                 <form>
-                  <input type="file" id="img" className="user-img-input" />
+                  <input type="file" id="img" className="user-img-input" onChange={(e) => setImage(e.target.files[0])} />
                   <label htmlFor="img" className="user-img-label"><IoCamera className="icon" /></label>
                 </form>
               }
