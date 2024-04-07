@@ -5,12 +5,17 @@ import Profile from './pages/users/Profile';
 import RegisterPage from './pages/users/Register';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
+import { useSelector } from "react-redux";
 
 function App() {
+  const { user } = useSelector((state) => state.user);
   return (
     <>
       <BrowserRouter>
-        <Header />
+        {
+          user &&
+          <Header />
+        }
         <Routes>
           <Route path='/users/login' element={<LoginPage />} />
           <Route path='/users/register' element={<RegisterPage />} />
