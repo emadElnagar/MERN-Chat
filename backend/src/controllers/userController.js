@@ -70,7 +70,7 @@ export const GetAllUsers = async (_req, res) => {
   }
 }
 
-// Get single users
+// Get single user
 export const GetSingleUser = async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
@@ -80,6 +80,20 @@ export const GetSingleUser = async (req, res) => {
       message: error.message
     });
   }
+}
+
+// Change user image
+export const ChangeUserImg = async (req, res) => {
+  const newUser = { image: req.file.filename }
+  User.updateOne({ _id: req.params.id }, { $set: newUser }).then(_result => {
+    res.status(200).json({
+      message: "User image changed successfully"
+    });
+  }).catch((error) => {
+    res.status(401).json({
+      message: error.message
+    });
+  });
 }
 
 // Delete user

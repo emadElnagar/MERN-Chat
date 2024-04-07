@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { 
+  ChangeUserImg,
   DeleteUser,
   GetAllUsers, 
   GetSingleUser, 
@@ -20,6 +21,9 @@ userRouter.get('/all', GetAllUsers);
 
 // Get single user
 userRouter.get('/profile/:id', GetSingleUser);
+
+// Change user image
+userRouter.patch('/:id/image/change', ChangeUserImg);
 
 // Delete user
 userRouter.delete('/:id/delete', DeleteUser);
