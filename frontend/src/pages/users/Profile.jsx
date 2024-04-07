@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { GetSingleUser } from "../../features/UserFeatures";
 import UserAvatar from "../../assets/user-avatar.png"
 import LoadingScreen from "../../components/LoadingScreen";
+import { IoCamera } from "react-icons/io5";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,7 @@ const Profile = () => {
       <div className="container">
         {
           isLoading ? <LoadingScreen /> :
+          profile &&
           <div className="img-container">  
             <div className="image">  
               <img
@@ -32,6 +34,13 @@ const Profile = () => {
                 alt="user avatar"
                 className="profile-img"
               />
+              {
+                user && user._id === profile._id &&
+                <form>
+                  <input type="file" id="img" className="user-img-input" />
+                  <label htmlFor="img" className="user-img-label"><IoCamera className="icon" /></label>
+                </form>
+              }
             </div>
             <h2 className="heading">{ profile.firstName } { profile.lastName }</h2>
           </div>

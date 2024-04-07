@@ -46,7 +46,6 @@ export const Logout = createAsyncThunk("users/logout", async () => {
 export const GetSingleUser = createAsyncThunk("users/profile", async (id, { rejectWithValue }) => {
   try {
     const response = await axios.get(`${url}/profile/${id}`);
-    console.log(response.data)
     return response.data;
   } catch (error) {
     rejectWithValue(error.message);
