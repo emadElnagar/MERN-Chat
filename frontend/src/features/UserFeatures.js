@@ -42,6 +42,17 @@ export const Logout = createAsyncThunk("users/logout", async () => {
   sessionStorage.removeItem('userInfo');
 });
 
+// Get single user
+export const GetSingleUser = createAsyncThunk("users/profile", async (id, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(`${url}/profile/${id}`);
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    rejectWithValue(error.message);
+  }
+});
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -80,6 +91,18 @@ const userSlice = createSlice({
       .addCase(Logout.fulfilled, (state) => {
         state.isLoading = false;
         state.user = null;
+      })
+      // Get single user
+      .addCase(GetSingleUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(GetSingleUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.profile = action.payload;
+      })
+      .addCase(GetSingleUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
       })
   }
 });

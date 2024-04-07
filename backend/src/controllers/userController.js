@@ -32,7 +32,7 @@ export const userRegister = async (req, res) => {
     password: await bcrypt.hash(req.body.password, 10),
   });
   const token = generateToken(user);
-  user.save().then(_user => {
+  await user.save().then(_user => {
     res.status(200).json({
       token
     });
@@ -73,7 +73,7 @@ export const GetAllUsers = async (_req, res) => {
 // Get single users
 export const GetSingleUser = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.params._id });
+    const user = await User.findOne({ _id: req.params.id });
     res.status(200).json(user);
   } catch (error) {
     res.status(401).json({
