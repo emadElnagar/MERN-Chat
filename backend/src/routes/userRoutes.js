@@ -5,6 +5,7 @@ import {
   DeleteUser,
   GetAllUsers, 
   GetSingleUser, 
+  SearchUser, 
   userLogin, 
   userRegister 
 } from "../controllers/userController.js";
@@ -28,5 +29,7 @@ userRouter.post('/:id/image/change', upload.single('file'), ChangeUserImg);
 
 // Delete user
 userRouter.delete('/:id/delete', DeleteUser);
+
+userRouter.get('/', SearchUser);
 
 export default userRouter;
