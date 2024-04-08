@@ -52,6 +52,15 @@ export const GetSingleUser = createAsyncThunk("users/profile", async (id, { reje
   }
 });
 
+// Change user image
+export const ChagneUserImage = createAsyncThunk("users/image", async (data, { rejectWithValue }) => {
+  try {
+    axios.post(`http://localhost:5000/api/users/${data.id}/image/change`, data.formdata);
+  } catch (error) {
+    rejectWithValue(error.message);
+  }
+});
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -100,6 +109,25 @@ const userSlice = createSlice({
         state.profile = action.payload;
       })
       .addCase(GetSingleUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Change user image
+      .addCase(ChagneUserImage.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(ChagneUserImage.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const {
+          arg: { _id },
+        } = action.meta;
+        if (_id) {
+          state.users = state.users.map((user) =>
+          user._id === _id ? action.payload : user
+          );
+        }
+      })
+      .addCase(ChagneUserImage.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       })
