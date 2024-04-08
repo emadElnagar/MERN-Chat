@@ -2,10 +2,12 @@ import { useEffect, useState } from "react"
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom"
-import { GetSingleUser } from "../../features/UserFeatures";
+import { ChagneUserImage, GetSingleUser } from "../../features/UserFeatures";
 import UserAvatar from "../../assets/user-avatar.png"
 import LoadingScreen from "../../components/LoadingScreen";
 import { IoCamera } from "react-icons/io5";
+import { AiOutlineClose } from "react-icons/ai";
+import { AiOutlineCheck } from "react-icons/ai";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -19,6 +21,17 @@ const Profile = () => {
   if (! user) {
     navigate("/users/login");
   }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formdata = new FormData();
+    formdata.append('file', image);
+    dispatch(ChagneUserImage({
+      id: user._id,
+      formdata
+    }));
+    setImage('');
+    dispatch(GetSingleUser(id));
+  }
   return (
     <>
       <Helmet>
@@ -31,15 +44,27 @@ const Profile = () => {
           <div className="img-container">  
             <div className="image">
               <img
-                src={`${image ? URL.createObjectURL(image) : profile.image ? profile.image : UserAvatar}`} 
+                src={`${image ? URL.createObjectURL(image) : profile.image ? 'http://localhost:5000/' + profile.image : UserAvatar}`} 
                 alt="user avatar"
                 className="profile-img"
               />
               {
                 user && user._id === profile._id &&
-                <form>
-                  <input type="file" id="img" className="user-img-input" onChange={(e) => setImage(e.target.files[0])} />
-                  <label htmlFor="img" className="user-img-label"><IoCamera className="icon" /></label>
+                <form onSubmit={handleSubmit}>
+                  {
+                    image ? (
+                      <>
+                        <button type="submit"><AiOutlineCheck /></button>
+                        <button onClick={() => setImage('')}><AiOutlineClose /></button>
+                      </>
+                    ) : (
+                      <>
+                        <input type="file" id="img" className="user-img-input" onChange={(e) => setImage(e.target.files[0])} />
+                        <label htmlFor="img" className="user-img-label"><IoCamera className="icon" /></label>
+                      </>
+                    )
+                  }
+                  
                 </form>
               }
             </div>

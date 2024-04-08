@@ -1,4 +1,5 @@
 import { Router } from "express";
+import upload from "../middlewares/multerMiddleWare.js";
 import { 
   ChangeUserImg,
   DeleteUser,
@@ -23,7 +24,7 @@ userRouter.get('/all', GetAllUsers);
 userRouter.get('/profile/:id', GetSingleUser);
 
 // Change user image
-userRouter.patch('/:id/image/change', ChangeUserImg);
+userRouter.post('/:id/image/change', upload.single('file'), ChangeUserImg);
 
 // Delete user
 userRouter.delete('/:id/delete', DeleteUser);
