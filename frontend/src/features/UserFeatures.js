@@ -73,6 +73,7 @@ const userSlice = createSlice({
       })
       .addCase(SignUp.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.error = null;
         state.users.push(action.payload);
         state.user = action.payload;
       })
@@ -86,6 +87,7 @@ const userSlice = createSlice({
       })
       .addCase(Login.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.error = null;
         state.user = action.payload;
       })
       .addCase(Login.rejected, (state, action) => {
@@ -98,6 +100,7 @@ const userSlice = createSlice({
       })
       .addCase(Logout.fulfilled, (state) => {
         state.isLoading = false;
+        state.error = null;
         state.user = null;
       })
       // Get single user
@@ -106,6 +109,7 @@ const userSlice = createSlice({
       })
       .addCase(GetSingleUser.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.error = null;
         state.profile = action.payload;
       })
       .addCase(GetSingleUser.rejected, (state, action) => {
@@ -118,6 +122,7 @@ const userSlice = createSlice({
       })
       .addCase(ChagneUserImage.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.error = null;
         const {
           arg: { _id },
         } = action.meta;
