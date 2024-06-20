@@ -111,7 +111,7 @@ export const DeleteUser = async (req, res) => {
 
 // Search user
 export const SearchUser = async (req, res) => {
-  const { search } = req.params;
+  const { search } = req.query;
   if (search) {
     $or: [
       { firstName: { $regex: req.body.search, $options: "i" } },
