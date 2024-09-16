@@ -224,6 +224,22 @@ input[type='submit'], button, a {
   }
 }
 
+.chat-container {
+  width: calc(100% - 90px);
+  float: right;
+}
+
+.chat-box {
+  height: calc(100vh - 110px);
+  border: 1px solid #000;
+}
+
+.message-box {
+  height: 40px;
+  border: 1px solid #000;
+  border-top: none;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
