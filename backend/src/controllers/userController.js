@@ -111,16 +111,14 @@ export const DeleteUser = async (req, res) => {
 
 // Search user
 export const SearchUser = async (req, res) => {
-  const { search } = req.query;
-  if (search) {
-    $or: [
-      { firstName: { $regex: req.body.search, $options: "i" } },
-      { lastName: { $regex: req.body.search, $options: "i" } },
-      { email: { $regex: req.body.search, $options: "i" } },
-    ]
-  } else {
-    res.status(404).json({
-      message: "Searched user not found"
-    });
-  }
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+  res.status(200).json({ users });
 }
