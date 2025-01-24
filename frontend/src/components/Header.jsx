@@ -1,7 +1,7 @@
 import LiveTalk from "../assets/chat-icon.png";
 import { AiFillMessage } from "react-icons/ai";
-import { FaUserAlt } from "react-icons/fa";
-import { IoSettingsSharp, IoSunnySharp } from "react-icons/io5";
+import { FaUserAlt, FaUserFriends } from "react-icons/fa";
+import { IoSettingsSharp, IoSunnySharp, IoSearchSharp } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -35,6 +35,12 @@ const Header = () => {
               <Link to={`/users/profile/${user && user._id}`}>
                 <FaUserAlt className="icon" title="profile" />
               </Link>
+            </li>
+            <li>
+              <FaUserFriends className="icon" title="friends" />
+            </li>
+            <li>
+              <IoSearchSharp className="icon" title="search" />
             </li>
             <li>
               <IoSettingsSharp className="icon" title="settings" />
