@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const ChatPage = () => {
   const { user } = useSelector((state) => state.user);
@@ -7,13 +8,19 @@ const ChatPage = () => {
   if (!user) {
     navigate("/users/login");
   }
+
   return (
-    <div className="container">
-      <div className="chat-container">
-        <div className="chat-box"></div>
-        <div className="message-box"></div>
+    <>
+      <Helmet>
+        <title>LiveTalk</title>
+      </Helmet>
+      <div className="container">
+        <div className="chat-container">
+          <div className="chat-box"></div>
+          <div className="message-box"></div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
