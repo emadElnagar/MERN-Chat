@@ -1,13 +1,22 @@
 import LiveTalk from "../assets/chat-icon.png";
+import { useState } from "react";
 import { AiFillMessage } from "react-icons/ai";
 import { FaUserAlt, FaUserFriends } from "react-icons/fa";
-import { IoSettingsSharp, IoSunnySharp, IoSearchSharp } from "react-icons/io5";
+import {
+  IoSettingsSharp,
+  IoSunnySharp,
+  IoMoon,
+  IoSearchSharp,
+} from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Logout } from "../features/UserFeatures";
+import { changeTheme } from "../features/ThemeFeatures";
 
 const Header = () => {
+  const { theme } = useSelector((state) => state.theme);
+  const [mode, setMode] = useState(theme);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
@@ -15,6 +24,11 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(Logout());
     navigate("/");
+  };
+  // Change theme
+  const handleChangeTheme = (theme) => {
+    setMode(theme);
+    dispatch(changeTheme(theme));
   };
   return (
     <header>
@@ -50,7 +64,19 @@ const Header = () => {
         <div className="user">
           <ul>
             <li>
-              <IoSunnySharp className="icon" title="light" />
+              {mode === "light" ? (
+                <IoMoon
+                  className="icon"
+                  title="dark"
+                  onClick={() => handleChangeTheme("dark")}
+                />
+              ) : (
+                <IoSunnySharp
+                  className="icon"
+                  title="light"
+                  onClick={() => handleChangeTheme("light")}
+                />
+              )}
             </li>
             <li>
               <MdLogout

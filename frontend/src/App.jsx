@@ -9,9 +9,10 @@ import { useSelector } from "react-redux";
 import ChatPage from "./pages/chat/chat";
 
 function App() {
+  const { theme } = useSelector((state) => state.theme);
   const { user } = useSelector((state) => state.user);
   return (
-    <>
+    <div className={`${theme}`}>
       <BrowserRouter>
         {user && <Header />}
         <Routes>
@@ -22,7 +23,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 
