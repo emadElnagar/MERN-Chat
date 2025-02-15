@@ -2,67 +2,95 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
-const url = 'http://localhost:5000/api/users';
-
+const url = "http://localhost:5000/api/users";
 
 const initialState = {
   users: [],
+  searchedUsers: [],
   user: null,
   profile: null,
   isLoading: false,
-  error: null
-}
+  error: null,
+};
 
 // User sign up
-export const SignUp = createAsyncThunk("users/register", async (user, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${url}/register`, user);
-    const data = jwtDecode(response.data.token);
-    sessionStorage.setItem('userInfo', JSON.stringify(data));
-    return data;
-  } catch (error) {    
-    return rejectWithValue(error.message);
+export const SignUp = createAsyncThunk(
+  "users/register",
+  async (user, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${url}/register`, user);
+      const data = jwtDecode(response.data.token);
+      sessionStorage.setItem("userInfo", JSON.stringify(data));
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
-});
+);
 
 // User login
-export const Login = createAsyncThunk("users/login", async (user, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${url}/login`, user);
-    const data = jwtDecode(response.data.token);
-    sessionStorage.setItem('userInfo', JSON.stringify(data));
-    return data;
-  } catch (error) {
-    return rejectWithValue(error.message);
+export const Login = createAsyncThunk(
+  "users/login",
+  async (user, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${url}/login`, user);
+      const data = jwtDecode(response.data.token);
+      sessionStorage.setItem("userInfo", JSON.stringify(data));
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
-});
+);
 
 // User logout
 export const Logout = createAsyncThunk("users/logout", async () => {
-  sessionStorage.removeItem('userInfo');
+  sessionStorage.removeItem("userInfo");
 });
 
 // Get single user
-export const GetSingleUser = createAsyncThunk("users/profile", async (id, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`${url}/profile/${id}`);
-    return response.data;
-  } catch (error) {
-    rejectWithValue(error.message);
+export const GetSingleUser = createAsyncThunk(
+  "users/profile",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${url}/profile/${id}`);
+      return response.data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
   }
-});
+);
 
 // Change user image
-export const ChagneUserImage = createAsyncThunk("users/image", async (data, { rejectWithValue }) => {
-  try {
-    axios.post(`http://localhost:5000/api/users/${data.id}/image/change`, data.formdata);
-  } catch (error) {
-    rejectWithValue(error.message);
+export const ChagneUserImage = createAsyncThunk(
+  "users/image",
+  async (data, { rejectWithValue }) => {
+    try {
+      axios.post(
+        `http://localhost:5000/api/users/${data.id}/image/change`,
+        data.formdata
+      );
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
   }
-});
+);
+
+// Search user
+export const SearchUser = createAsyncThunk(
+  "users/search",
+  async (keyword, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${url}/search?search=${keyword}`);
+      return response.data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -128,7 +156,7 @@ const userSlice = createSlice({
         } = action.meta;
         if (_id) {
           state.users = state.users.map((user) =>
-          user._id === _id ? action.payload : user
+            user._id === _id ? action.payload : user
           );
         }
       })
@@ -136,7 +164,20 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.error = action.error;
       })
-  }
+      // Search user
+      .addCase(SearchUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(SearchUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.searchedUsers = action.payload;
+      })
+      .addCase(SearchUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      });
+  },
 });
 
 export default userSlice.reducer;
