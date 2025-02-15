@@ -77,7 +77,7 @@ export const ChagneUserImage = createAsyncThunk(
 );
 
 // Search user
-export const SearchUser = createAsyncThunk(
+export const SearchUsers = createAsyncThunk(
   "users/search",
   async (keyword, { rejectWithValue }) => {
     try {
@@ -165,15 +165,15 @@ const userSlice = createSlice({
         state.error = action.error;
       })
       // Search user
-      .addCase(SearchUser.pending, (state) => {
+      .addCase(SearchUsers.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(SearchUser.fulfilled, (state, action) => {
+      .addCase(SearchUsers.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
         state.searchedUsers = action.payload;
       })
-      .addCase(SearchUser.rejected, (state, action) => {
+      .addCase(SearchUsers.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });

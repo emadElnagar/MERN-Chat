@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import { useSelector } from "react-redux";
 import ChatPage from "./pages/chat/chat";
+import SearchPage from "./pages/users/Search";
 
 function App() {
   const { theme } = useSelector((state) => state.theme);
@@ -20,6 +21,7 @@ function App() {
           <Route path="/users/login" element={<LoginPage />} />
           <Route path="/users/register" element={<RegisterPage />} />
           <Route path="/users/profile/:id" element={<Profile />} />
+          <Route path="/users/search" element={<SearchPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

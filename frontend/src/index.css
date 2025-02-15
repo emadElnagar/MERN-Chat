@@ -2,15 +2,9 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
   --primary: #121212;
   --background: #f1f1f1;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --secondary: #646cff;
 }
 
 * {
@@ -24,7 +18,7 @@ li {
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--primary);
   text-decoration: inherit;
 }
 
@@ -74,7 +68,7 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--primary);
 }
 button:focus,
 button:focus-visible {
@@ -257,5 +251,45 @@ input[type='submit'], button, a {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+form.search {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  button {
+    background: var(--secondary);
+    border: 1px solid var(--secondary);
+    color: #fff;
+    border-radius: 0;
+    padding: 10px;
+  }
+  input {
+    width: 80%;
+    padding: 10px 5px;
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.users-list {
+  margin-top: 20px;
+  li {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+    button {
+      background: var(--secondary);
+      border: 1px solid var(--secondary);
+      color: #fff;
+      padding: 10px;
+    }
   }
 }

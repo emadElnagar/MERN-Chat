@@ -54,7 +54,9 @@ const Header = () => {
               <FaUserFriends className="icon" title="friends" />
             </li>
             <li>
-              <IoSearchSharp className="icon" title="search" />
+              <Link to={"/users/search"}>
+                <IoSearchSharp className="icon" title="search" />
+              </Link>
             </li>
             <li>
               <IoSettingsSharp className="icon" title="settings" />
