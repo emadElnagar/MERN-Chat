@@ -2,16 +2,35 @@ import { Fragment } from "react";
 import { Helmet } from "react-helmet";
 import { IoSearchSharp } from "react-icons/io5";
 import { IoIosPersonAdd } from "react-icons/io";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { SearchUsers } from "../../features/UserFeatures";
 
 const SearchPage = () => {
+  const [search, setSearch] = useState("");
+  const dispatch = useDispatch();
+  const { error, isLoading, searchedUsers } = useSelector(
+    (state) => state.user
+  );
+  // Search users
+  const handleSearch = (e) => {
+    e.preventDefault();
+    dispatch(SearchUsers(search));
+    console.log(searchedUsers);
+  };
   return (
     <Fragment>
       <Helmet>
         <title>LiveTalk-search</title>
       </Helmet>
       <div className="container">
-        <form onSubmit={(e) => e.preventDefault()} className="search">
-          <input type="text" placeholder="Search users" />
+        <form onSubmit={handleSearch} className="search">
+          <input
+            type="text"
+            placeholder="Search users"
+            onChange={(e) => setSearch(e.target.value)}
+          />
           <button type="submit">
             <IoSearchSharp />
           </button>

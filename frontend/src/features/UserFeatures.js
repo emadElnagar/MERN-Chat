@@ -81,7 +81,7 @@ export const SearchUsers = createAsyncThunk(
   "users/search",
   async (keyword, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${url}/search?search=${keyword}`);
+      const response = await axios.get(`${url}?search=${keyword}`);
       return response.data;
     } catch (error) {
       rejectWithValue(error.message);
