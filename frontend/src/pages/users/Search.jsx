@@ -6,6 +6,9 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { SearchUsers } from "../../features/UserFeatures";
+import LoadingScreen from "../../components/LoadingScreen";
+import ErrorBox from "../../components/ErrorBox";
+import UserAvatar from "../../assets/user-avatar.png";
 
 const SearchPage = () => {
   const [search, setSearch] = useState("");
@@ -17,7 +20,6 @@ const SearchPage = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     dispatch(SearchUsers(search));
-    console.log(searchedUsers);
   };
   return (
     <Fragment>
@@ -37,38 +39,37 @@ const SearchPage = () => {
         </form>
         <div className="users-list">
           <ul>
-            <li>
-              <div className="user image">
-                <img
-                  src="https://th.bing.com/th/id/OIP.wEsBe2udHBieFeZVmus8qAHaHk?rs=1&pid=ImgDetMain"
-                  alt="problem showing image"
-                />
-              </div>
-              <div className="user-name">
-                <h4>John Doe</h4>
-              </div>
-              <div className="button">
-                <button>
-                  Add friend <IoIosPersonAdd />
-                </button>
-              </div>
-            </li>
-            <li>
-              <div className="user image">
-                <img
-                  src="https://th.bing.com/th/id/OIP.wEsBe2udHBieFeZVmus8qAHaHk?rs=1&pid=ImgDetMain"
-                  alt="problem showing image"
-                />
-              </div>
-              <div className="user-name">
-                <h4>John Doe</h4>
-              </div>
-              <div className="button">
-                <button>
-                  Add friend <IoIosPersonAdd />
-                </button>
-              </div>
-            </li>
+            {isLoading ? (
+              <LoadingScreen />
+            ) : error ? (
+              <ErrorBox message={error} />
+            ) : (
+              searchedUsers &&
+              searchedUsers.users.map((user, index) => (
+                <li key={index}>
+                  <div className="user image">
+                    <img
+                      src={`${
+                        user.image
+                          ? "http://localhost:5000/" + user.image
+                          : UserAvatar
+                      }`}
+                      alt="problem showing image"
+                    />
+                  </div>
+                  <div className="user-name">
+                    <h4>
+                      {user.firstName} {user.lastName}
+                    </h4>
+                  </div>
+                  <div className="button">
+                    <button>
+                      Add friend <IoIosPersonAdd />
+                    </button>
+                  </div>
+                </li>
+              ))
+            )}
           </ul>
         </div>
       </div>
