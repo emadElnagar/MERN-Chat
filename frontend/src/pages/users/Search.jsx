@@ -45,6 +45,7 @@ const SearchPage = () => {
               <ErrorBox message={error} />
             ) : (
               searchedUsers &&
+              searchedUsers.users &&
               searchedUsers.users.map((user, index) => (
                 <li key={index}>
                   <div className="user image">
