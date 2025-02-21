@@ -21,6 +21,7 @@ export const SignUp = createAsyncThunk(
       const response = await axios.post(`${url}/register`, user);
       const data = jwtDecode(response.data.token);
       sessionStorage.setItem("userInfo", JSON.stringify(data));
+      sessionStorage.setItem("token", response.data.token);
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -36,6 +37,7 @@ export const Login = createAsyncThunk(
       const response = await axios.post(`${url}/login`, user);
       const data = jwtDecode(response.data.token);
       sessionStorage.setItem("userInfo", JSON.stringify(data));
+      sessionStorage.setItem("token", response.data.token);
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -46,6 +48,7 @@ export const Login = createAsyncThunk(
 // User logout
 export const Logout = createAsyncThunk("users/logout", async () => {
   sessionStorage.removeItem("userInfo");
+  sessionStorage.removeItem("token");
 });
 
 // Get single user
@@ -81,7 +84,13 @@ export const SearchUsers = createAsyncThunk(
   "users/search",
   async (keyword, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${url}?search=${keyword}`);
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.get(`${url}?search=${keyword}`, config);
       return response.data;
     } catch (error) {
       rejectWithValue(error.message);
