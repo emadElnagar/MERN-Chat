@@ -10,6 +10,7 @@ import {
   userLogin,
   userRegister,
 } from "../controllers/userController.js";
+import { isAuth } from "../middlewares/authMiddleWare.js";
 
 const userRouter = Router();
 
@@ -35,6 +36,6 @@ userRouter.post("/:id/image/change", upload.single("file"), ChangeUserImg);
 userRouter.delete("/:id/delete", DeleteUser);
 
 // Search user
-userRouter.get("/", SearchUser);
+userRouter.get("/", isAuth, SearchUser);
 
 export default userRouter;

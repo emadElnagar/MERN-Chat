@@ -159,6 +159,9 @@ export const SearchUser = async (req, res) => {
         ],
       }
     : {};
+  if (!req.user) {
+    return res.status(401).json({ message: "Not authorized, user not found" });
+  }
   const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
   res.status(200).json({ users });
 };
