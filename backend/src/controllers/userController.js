@@ -68,7 +68,7 @@ export const userLogin = async (req, res) => {
 // Get all users
 export const GetAllUsers = async (_req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select("-password");
     res.status(200).json(users);
   } catch (error) {
     res.status(401).json({
@@ -80,7 +80,7 @@ export const GetAllUsers = async (_req, res) => {
 // Get single user
 export const GetSingleUser = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.params.id });
+    const user = await User.findOne({ _id: req.params.id }).select("-password");
     res.status(200).json(user);
   } catch (error) {
     res.status(401).json({
