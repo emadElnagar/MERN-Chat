@@ -9,6 +9,7 @@ import {
   SearchUser,
   userLogin,
   userRegister,
+  SendFriendRequest,
 } from "../controllers/userController.js";
 import { isAuth } from "../middlewares/authMiddleWare.js";
 
@@ -37,5 +38,8 @@ userRouter.delete("/:id/delete", DeleteUser);
 
 // Search user
 userRouter.get("/", isAuth, SearchUser);
+
+// Send friend request
+userRouter.post("/sendrequest", isAuth, SendFriendRequest);
 
 export default userRouter;

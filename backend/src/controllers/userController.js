@@ -165,3 +165,22 @@ export const SearchUser = async (req, res) => {
   const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
   res.status(200).json({ users });
 };
+
+// Send friend request
+export const SendFriendRequest = async (req, res) => {
+  const { sender, receiver } = req.body;
+  try {
+    await User.updateOne(
+      { _id: sender },
+      { $addToSet: { sentRequests: receiver } }
+    );
+    await User.updateOne(
+      { _id: receiver },
+      { $addToSet: { friendRequests: sender } }
+    );
+  } catch (error) {
+    res.status(401).json({
+      message: error.message,
+    });
+  }
+};
