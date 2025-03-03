@@ -203,3 +203,24 @@ export const RejectFriendRequest = async (req, res) => {
     });
   }
 };
+
+// Accept friend request
+export const AcceptFriendRequest = async (req, res) => {
+  const { sender, receiver } = req.body;
+  try {
+    await User.updateOne(
+      { _id: sender },
+      { $pull: { sentRequests: receiver } }
+    );
+    await User.updateOne(
+      { _id: receiver },
+      { $pull: { friendRequests: sender } }
+    );
+    await User.updateOne({ _id: sender }, { $addToSet: { friends: receiver } });
+    await User.updateOne({ _id: receiver }, { $addToSet: { friends: sender } });
+  } catch (error) {
+    res.status(401).json({
+      message: error.message,
+    });
+  }
+};

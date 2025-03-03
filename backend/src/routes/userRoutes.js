@@ -11,6 +11,7 @@ import {
   userRegister,
   SendFriendRequest,
   RejectFriendRequest,
+  AcceptFriendRequest,
 } from "../controllers/userController.js";
 import { isAuth } from "../middlewares/authMiddleWare.js";
 
@@ -45,5 +46,8 @@ userRouter.post("/sendrequest", isAuth, SendFriendRequest);
 
 // Reject friend request
 userRouter.post("/rejectrequest", isAuth, RejectFriendRequest);
+
+// Accept friend request
+userRouter.post("/acceptrequest", isAuth, AcceptFriendRequest);
 
 export default userRouter;
