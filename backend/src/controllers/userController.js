@@ -243,3 +243,42 @@ export const AcceptFriendRequest = async (req, res) => {
     });
   }
 };
+
+// Get friends
+export const GetFriends = async (req, res) => {
+  const token = req.headers["authorization"];
+  if (!token) {
+    return res
+      .status(400)
+      .json({ message: "Token is required in the Authorization header" });
+  }
+  try {
+    const tokenWithoutBearer = token.split(" ")[1];
+    if (!tokenWithoutBearer) {
+      return res
+        .status(400)
+        .json({ message: "Token is not properly formatted" });
+    }
+    const decoded = JWT.verify(tokenWithoutBearer, process.env.JWT_SECRET);
+    const userId = decoded._id;
+    const user = await User.findById(userId);
+    const friends = await User.find({ _id: { $in: user.friends } }).select(
+      "_id firstName lastName email image"
+    );
+    const sentRequests = await User.find({
+      _id: { $in: user.sentRequests },
+    }).select("_id firstName lastName email image");
+    const friendRequests = await User.find({
+      _id: { $in: user.friendRequests },
+    }).select("_id firstName lastName email image");
+    res.status(200).json({
+      friends,
+      sentRequests,
+      friendRequests,
+    });
+  } catch (error) {
+    res.status(401).json({
+      message: error.message,
+    });
+  }
+};
