@@ -185,6 +185,25 @@ export const SendFriendRequest = async (req, res) => {
   }
 };
 
+// Cancel friend request
+export const CancelFriendRequest = async (req, res) => {
+  const { sender, receiver } = req.body;
+  try {
+    await User.updateOne(
+      { _id: sender },
+      { $pull: { sentRequests: receiver } }
+    );
+    await User.updateOne(
+      { _id: receiver },
+      { $pull: { friendRequests: sender } }
+    );
+  } catch (error) {
+    res.status(401).json({
+      message: error.message,
+    });
+  }
+};
+
 // Reject friend request
 export const RejectFriendRequest = async (req, res) => {
   const { sender, receiver } = req.body;
