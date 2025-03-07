@@ -14,6 +14,7 @@ import {
   AcceptFriendRequest,
   CancelFriendRequest,
   GetFriends,
+  RemoveFriend,
 } from "../controllers/userController.js";
 import { isAuth } from "../middlewares/authMiddleWare.js";
 
@@ -57,5 +58,8 @@ userRouter.post("/acceptrequest", isAuth, AcceptFriendRequest);
 
 // Get friends
 userRouter.get("/friends", isAuth, GetFriends);
+
+// Remove friend
+userRouter.post("/removefriend", isAuth, RemoveFriend);
 
 export default userRouter;

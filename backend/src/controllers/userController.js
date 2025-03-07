@@ -282,3 +282,29 @@ export const GetFriends = async (req, res) => {
     });
   }
 };
+
+// Remove friend
+export const RemoveFriend = async (req, res) => {
+  const { friendId } = req.body;
+  const token = req.headers["authorization"];
+  if (!token) {
+    return res
+      .status(400)
+      .json({ message: "Token is required in the Authorization header" });
+  }
+  try {
+    const tokenWithoutBearer = token.split(" ")[1];
+    if (!tokenWithoutBearer) {
+      return res
+        .status(400)
+        .json({ message: "Token is not properly formatted" });
+    }
+    const userId = JWT.verify(tokenWithoutBearer, process.env.JWT_SECRET)._id;
+    await User.updateOne({ _id: userId }, { $pull: { friends: friendId } });
+    await User.updateOne({ _id: friendId }, { $pull: { friends: userId } });
+  } catch (error) {
+    res.status(401).json({
+      message: error.message,
+    });
+  }
+};
