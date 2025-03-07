@@ -51,7 +51,9 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              <FaUserFriends className="icon" title="friends" />
+              <Link to={"/users/friends"}>
+                <FaUserFriends className="icon" title="friends" />
+              </Link>
             </li>
             <li>
               <Link to={"/users/search"}>

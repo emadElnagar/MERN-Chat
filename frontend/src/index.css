@@ -274,6 +274,14 @@ form.search {
   }
 }
 
+.tab {
+  margin-inline-end: 10px;
+  &.active {
+  background: var(--secondary);
+  color: #fff;
+  }
+}
+
 .users-list {
   margin-top: 20px;
   li {
@@ -297,6 +305,7 @@ form.search {
       border: 1px solid var(--secondary);
       color: #fff;
       padding: 10px;
+      margin-inline-start: 5px;
     }
   }
 }
