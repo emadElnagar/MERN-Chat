@@ -7,6 +7,7 @@ const url = "http://localhost:5000/api/users";
 const initialState = {
   users: [],
   searchedUsers: [],
+  friendsList: [],
   user: null,
   profile: null,
   isLoading: false,
@@ -91,6 +92,25 @@ export const SearchUsers = createAsyncThunk(
         },
       };
       const response = await axios.get(`${url}?search=${keyword}`, config);
+      return response.data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
+// Get friends
+export const GetFriends = createAsyncThunk(
+  "users/friends",
+  async (_, rejectWithValue) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.get(`${url}/friends`, config);
       return response.data;
     } catch (error) {
       rejectWithValue(error.message);
@@ -183,6 +203,19 @@ const userSlice = createSlice({
         state.searchedUsers = action.payload;
       })
       .addCase(SearchUsers.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Get friends
+      .addCase(GetFriends.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(GetFriends.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.friendsList = action.payload;
+      })
+      .addCase(GetFriends.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
