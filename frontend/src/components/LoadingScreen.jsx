@@ -1,4 +1,4 @@
-import { Discuss } from 'react-loader-spinner';
+import { Discuss } from "react-loader-spinner";
 
 const LoadingScreen = () => {
   return (
@@ -12,7 +12,7 @@ const LoadingScreen = () => {
       color="#fff"
       backgroundColor="#F4442E"
     />
-  )
-}
+  );
+};
 
 export default LoadingScreen;

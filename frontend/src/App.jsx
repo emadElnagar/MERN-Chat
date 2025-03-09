@@ -18,7 +18,11 @@ function App() {
       <BrowserRouter>
         {user && <Header />}
         <Routes>
-          <Route path="/" element={<ChatPage />} />
+          {user ? (
+            <Route path="/" element={<ChatPage />} />
+          ) : (
+            <Route path="/" element={<LoginPage />} />
+          )}
           <Route path="/users/login" element={<LoginPage />} />
           <Route path="/users/register" element={<RegisterPage />} />
           <Route path="/users/profile/:id" element={<Profile />} />

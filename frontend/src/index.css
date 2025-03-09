@@ -33,6 +33,9 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  &:has(.center) {
+    place-items: center;
+  }
   /* Dark mode */
   &:has(.dark) {
     --primary: #f1f1f1;
@@ -76,21 +79,21 @@ button:focus-visible {
 
 .container {
   margin: auto;
-  @media (min-width:1200px) {
+  @media (min-width: 1200px) {
     width: 1140px;
   }
-  @media (max-width:1199px) {
+  @media (max-width: 1199px) {
     width: 960px;
   }
-  @media (max-width:991px) {
+  @media (max-width: 991px) {
     width: 720px;
   }
-  @media (max-width:767px) {
+  @media (max-width: 767px) {
     width: 540px;
   }
-  @media (max-width:576px) {
+  @media (max-width: 576px) {
     max-width: 100%;
-  }  
+  }
 }
 
 header {
@@ -138,23 +141,22 @@ header {
     display: flex;
     flex-direction: row;
     &.multiple {
-      @media (min-width:577px) {
+      @media (min-width: 577px) {
         justify-content: space-between;
         input {
           width: 46%;
         }
       }
-      
     }
     input {
       width: 100%;
       margin-bottom: 20px;
     }
-    @media (max-width:576px) {
+    @media (max-width: 576px) {
       flex-direction: column;
     }
   }
-  @media (max-width:576px) {
+  @media (max-width: 576px) {
     max-width: 100%;
   }
 }
@@ -167,13 +169,15 @@ input {
   padding: 10px 5px;
 }
 
-input[type='submit'] {
+input[type="submit"] {
   background: radial-gradient(#535bf2, #747bff);
   color: #fff;
   border: none;
 }
 
-input[type='submit'], button, a {
+input[type="submit"],
+button,
+a {
   cursor: pointer;
 }
 
@@ -205,7 +209,7 @@ input[type='submit'], button, a {
     margin: 15px 0;
   }
   .image {
-    position: relative;    
+    position: relative;
   }
 }
 
@@ -276,8 +280,8 @@ form.search {
 .tab {
   margin-inline-end: 10px;
   &.active {
-  background: var(--secondary);
-  color: #fff;
+    background: var(--secondary);
+    color: #fff;
   }
 }
 
