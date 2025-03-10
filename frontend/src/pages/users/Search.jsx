@@ -1,26 +1,36 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { IoSearchSharp } from "react-icons/io5";
 import { IoIosPersonAdd } from "react-icons/io";
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { SearchUsers } from "../../features/UserFeatures";
+import { GetFriends, SearchUsers } from "../../features/UserFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
+import { useNavigate } from "react-router-dom";
+import { IoIosCheckmark, IoIosClose, IoIosChatboxes } from "react-icons/io";
+import { FaUserMinus } from "react-icons/fa";
 
 const SearchPage = () => {
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
-  const { error, isLoading, searchedUsers } = useSelector(
+  const navigate = useNavigate();
+  const { error, isLoading, searchedUsers, user, friendsList } = useSelector(
     (state) => state.user
   );
+  if (!user) {
+    navigate("/users/login");
+  }
   // Search users
   const handleSearch = (e) => {
     e.preventDefault();
     dispatch(SearchUsers(search));
   };
+  // Get user friends
+  useEffect(() => {
+    dispatch(GetFriends());
+  }, [dispatch, navigate, user]);
   return (
     <Fragment>
       <Helmet>
@@ -46,13 +56,13 @@ const SearchPage = () => {
             ) : (
               searchedUsers &&
               searchedUsers.users &&
-              searchedUsers.users.map((user, index) => (
+              searchedUsers.users.map((searchedUser, index) => (
                 <li key={index}>
                   <div className="user image">
                     <img
                       src={`${
-                        user.image
-                          ? "http://localhost:5000/" + user.image
+                        searchedUser.image
+                          ? "http://localhost:5000/" + searchedUser.image
                           : UserAvatar
                       }`}
                       alt="problem showing image"
@@ -60,13 +70,44 @@ const SearchPage = () => {
                   </div>
                   <div className="user-name">
                     <h4>
-                      {user.firstName} {user.lastName}
+                      {searchedUser.firstName} {searchedUser.lastName}
                     </h4>
                   </div>
                   <div className="button">
-                    <button>
-                      Add friend <IoIosPersonAdd />
-                    </button>
+                    {searchedUser && friendsList && (
+                      <>
+                        {friendsList.friends.find(
+                          (friend) => friend._id === searchedUser._id
+                        ) ? (
+                          <button>
+                            Chat <IoIosChatboxes />
+                          </button>
+                        ) : friendsList.sentRequests.find(
+                            (sentRequest) =>
+                              sentRequest._id === searchedUser._id
+                          ) ? (
+                          <button>
+                            Cancel request <FaUserMinus />
+                          </button>
+                        ) : friendsList.friendRequests.find(
+                            (friendRequest) =>
+                              friendRequest._id === searchedUser._id
+                          ) ? (
+                          <>
+                            <button>
+                              Accept <IoIosCheckmark />
+                            </button>
+                            <button>
+                              Decline <IoIosClose />
+                            </button>
+                          </>
+                        ) : (
+                          <button>
+                            Add friend <IoIosPersonAdd />
+                          </button>
+                        )}
+                      </>
+                    )}
                   </div>
                 </li>
               ))
