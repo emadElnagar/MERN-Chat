@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import {
   AddFriend,
+  CancelRequest,
   GetFriends,
   SearchUsers,
 } from "../../features/UserFeatures";
@@ -38,6 +39,10 @@ const SearchPage = () => {
   // Send friend request
   const handleAddFriend = (id) => {
     dispatch(AddFriend(id));
+  };
+  // Cancel request friend
+  const handleCancelRequest = (id) => {
+    dispatch(CancelRequest(id));
   };
   return (
     <Fragment>
@@ -94,7 +99,12 @@ const SearchPage = () => {
                             (sentRequest) =>
                               sentRequest._id === searchedUser._id
                           ) ? (
-                          <button>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleCancelRequest(searchedUser._id);
+                            }}
+                          >
                             Cancel request <FaUserMinus />
                           </button>
                         ) : friendsList.friendRequests.find(

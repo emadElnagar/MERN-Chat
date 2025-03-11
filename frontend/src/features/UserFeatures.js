@@ -141,6 +141,29 @@ export const AddFriend = createAsyncThunk(
   }
 );
 
+// Cancel friend request
+export const CancelRequest = createAsyncThunk(
+  "users/cancelRequest",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.post(
+        `${url}/cancelrequest`,
+        { receiver: id },
+        config
+      );
+      return response.data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -252,6 +275,19 @@ const userSlice = createSlice({
         state.friendsList.sentRequests.push(action.payload);
       })
       .addCase(AddFriend.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Cancel friend request
+      .addCase(CancelRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(CancelRequest.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.friendsList.sentRequests.pull(action.payload);
+      })
+      .addCase(CancelRequest.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
