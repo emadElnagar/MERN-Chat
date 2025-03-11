@@ -5,6 +5,7 @@ import { IoIosPersonAdd } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import {
+  AcceptRequest,
   AddFriend,
   CancelRequest,
   GetFriends,
@@ -40,9 +41,13 @@ const SearchPage = () => {
   const handleAddFriend = (id) => {
     dispatch(AddFriend(id));
   };
-  // Cancel request friend
+  // Cancel friend request
   const handleCancelRequest = (id) => {
     dispatch(CancelRequest(id));
+  };
+  // Accept friend request
+  const handleAcceptRequest = (id) => {
+    dispatch(AcceptRequest(id));
   };
   return (
     <Fragment>
@@ -112,7 +117,12 @@ const SearchPage = () => {
                               friendRequest._id === searchedUser._id
                           ) ? (
                           <>
-                            <button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleAcceptRequest(searchedUser._id);
+                              }}
+                            >
                               Accept <IoIosCheckmark />
                             </button>
                             <button>
