@@ -4,7 +4,11 @@ import { IoSearchSharp } from "react-icons/io5";
 import { IoIosPersonAdd } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { GetFriends, SearchUsers } from "../../features/UserFeatures";
+import {
+  AddFriend,
+  GetFriends,
+  SearchUsers,
+} from "../../features/UserFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
@@ -31,6 +35,10 @@ const SearchPage = () => {
   useEffect(() => {
     dispatch(GetFriends());
   }, [dispatch, navigate, user]);
+  // Send friend request
+  const handleAddFriend = (id) => {
+    dispatch(AddFriend(id));
+  };
   return (
     <Fragment>
       <Helmet>
@@ -102,7 +110,12 @@ const SearchPage = () => {
                             </button>
                           </>
                         ) : (
-                          <button>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleAddFriend(searchedUser._id);
+                            }}
+                          >
                             Add friend <IoIosPersonAdd />
                           </button>
                         )}

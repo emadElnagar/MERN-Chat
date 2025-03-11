@@ -118,6 +118,29 @@ export const GetFriends = createAsyncThunk(
   }
 );
 
+// Add new friend
+export const AddFriend = createAsyncThunk(
+  "users/addFriend",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.post(
+        `${url}/sendrequest`,
+        { receiver: id },
+        config
+      );
+      return response.data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -216,6 +239,19 @@ const userSlice = createSlice({
         state.friendsList = action.payload;
       })
       .addCase(GetFriends.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Add new friend
+      .addCase(AddFriend.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(AddFriend.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.friendsList.sentRequests.push(action.payload);
+      })
+      .addCase(AddFriend.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
