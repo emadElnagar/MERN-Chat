@@ -187,6 +187,29 @@ export const AcceptRequest = createAsyncThunk(
   }
 );
 
+// Reject friend request
+export const RejectRequest = createAsyncThunk(
+  "users/rejectRequest",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.post(
+        `${url}/rejectrequest`,
+        { sender: id },
+        config
+      );
+      return response.data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -325,6 +348,18 @@ const userSlice = createSlice({
         state.friendsList.friends.push(action.payload);
       })
       .addCase(AcceptRequest.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Reject friend request
+      .addCase(RejectRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(RejectRequest.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.friendsList.friendRequests.pull(action.payload);
+      })
+      .addCase(RejectRequest.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
