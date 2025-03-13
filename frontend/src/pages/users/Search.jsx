@@ -9,6 +9,7 @@ import {
   AddFriend,
   CancelRequest,
   GetFriends,
+  RejectRequest,
   SearchUsers,
 } from "../../features/UserFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
@@ -48,6 +49,10 @@ const SearchPage = () => {
   // Accept friend request
   const handleAcceptRequest = (id) => {
     dispatch(AcceptRequest(id));
+  };
+  // Reject friend request
+  const handleRejectRequest = (id) => {
+    dispatch(RejectRequest(id));
   };
   return (
     <Fragment>
@@ -125,7 +130,12 @@ const SearchPage = () => {
                             >
                               Accept <IoIosCheckmark />
                             </button>
-                            <button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleRejectRequest(searchedUser._id);
+                              }}
+                            >
                               Decline <IoIosClose />
                             </button>
                           </>
