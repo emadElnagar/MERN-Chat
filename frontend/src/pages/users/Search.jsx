@@ -11,13 +11,14 @@ import {
   GetFriends,
   RejectRequest,
   SearchUsers,
+  Unfriend,
 } from "../../features/UserFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
 import { useNavigate } from "react-router-dom";
 import { IoIosCheckmark, IoIosClose, IoIosChatboxes } from "react-icons/io";
-import { FaUserMinus } from "react-icons/fa";
+import { FaUserMinus, FaUserTimes } from "react-icons/fa";
 
 const SearchPage = () => {
   const [search, setSearch] = useState("");
@@ -53,6 +54,10 @@ const SearchPage = () => {
   // Reject friend request
   const handleRejectRequest = (id) => {
     dispatch(RejectRequest(id));
+  };
+  // Unfriend
+  const handleUnfriend = (id) => {
+    dispatch(Unfriend(id));
   };
   return (
     <Fragment>
@@ -102,9 +107,19 @@ const SearchPage = () => {
                         {friendsList.friends.find(
                           (friend) => friend._id === searchedUser._id
                         ) ? (
-                          <button>
-                            Chat <IoIosChatboxes />
-                          </button>
+                          <>
+                            <button>
+                              Chat <IoIosChatboxes />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleUnfriend(searchedUser._id);
+                              }}
+                            >
+                              Unfriend <FaUserTimes />
+                            </button>
+                          </>
                         ) : friendsList.sentRequests.find(
                             (sentRequest) =>
                               sentRequest._id === searchedUser._id
