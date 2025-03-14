@@ -210,6 +210,29 @@ export const RejectRequest = createAsyncThunk(
   }
 );
 
+// Unfriend (Remove friend)
+export const Unfriend = createAsyncThunk(
+  "users/remove",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.post(
+        `${url}/removefriend`,
+        { friendId: id },
+        config
+      );
+      return response.data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -360,6 +383,18 @@ const userSlice = createSlice({
         state.friendsList.friendRequests.pull(action.payload);
       })
       .addCase(RejectRequest.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Unfriend
+      .addCase(Unfriend.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(Unfriend.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.friendsList.friends.pull(action.payload);
+      })
+      .addCase(Unfriend.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
