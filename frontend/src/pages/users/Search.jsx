@@ -42,22 +42,27 @@ const SearchPage = () => {
   // Send friend request
   const handleAddFriend = (id) => {
     dispatch(AddFriend(id));
+    dispatch(GetFriends());
   };
   // Cancel friend request
   const handleCancelRequest = (id) => {
     dispatch(CancelRequest(id));
+    dispatch(GetFriends());
   };
   // Accept friend request
   const handleAcceptRequest = (id) => {
     dispatch(AcceptRequest(id));
+    dispatch(GetFriends());
   };
   // Reject friend request
   const handleRejectRequest = (id) => {
     dispatch(RejectRequest(id));
+    dispatch(GetFriends());
   };
   // Unfriend
   const handleUnfriend = (id) => {
     dispatch(Unfriend(id));
+    dispatch(GetFriends());
   };
   return (
     <Fragment>
