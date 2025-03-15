@@ -3,11 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
 import { IoIosChatboxes, IoIosClose, IoIosCheckmark } from "react-icons/io";
-import { FaUserMinus } from "react-icons/fa";
-import { GetFriends } from "../../features/UserFeatures";
+import { FaUserMinus, FaUserTimes } from "react-icons/fa";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
+import {
+  CancelRequest,
+  AcceptRequest,
+  RejectRequest,
+  Unfriend,
+  GetFriends,
+} from "../../features/UserFeatures";
 
 const FriendsPage = () => {
   const { user, error, isLoading, friendsList } = useSelector(
@@ -23,6 +29,26 @@ const FriendsPage = () => {
   useEffect(() => {
     dispatch(GetFriends());
   }, [dispatch]);
+  // Cancel friend request
+  const handleCancelRequest = (id) => {
+    dispatch(CancelRequest(id));
+    dispatch(GetFriends());
+  };
+  // Accept friend request
+  const handleAcceptRequest = (id) => {
+    dispatch(AcceptRequest(id));
+    dispatch(GetFriends());
+  };
+  // Reject friend request
+  const handleRejectRequest = (id) => {
+    dispatch(RejectRequest(id));
+    dispatch(GetFriends());
+  };
+  // Unfriend
+  const handleUnfriend = (id) => {
+    dispatch(Unfriend(id));
+    dispatch(GetFriends());
+  };
   return (
     <Fragment>
       <Helmet>
@@ -81,6 +107,14 @@ const FriendsPage = () => {
                         <button>
                           Chat <IoIosChatboxes />
                         </button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleUnfriend(friend._id);
+                          }}
+                        >
+                          Unfriend <FaUserTimes />
+                        </button>
                       </div>
                     </li>
                   ))
@@ -109,10 +143,20 @@ const FriendsPage = () => {
                         </h4>
                       </div>
                       <div className="button">
-                        <button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleAcceptRequest(friend._id);
+                          }}
+                        >
                           Accept <IoIosCheckmark />
                         </button>
-                        <button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleRejectRequest(friend._id);
+                          }}
+                        >
                           Decline <IoIosClose />
                         </button>
                       </div>
@@ -143,7 +187,12 @@ const FriendsPage = () => {
                         </h4>
                       </div>
                       <div className="button">
-                        <button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleCancelRequest(friend._id);
+                          }}
+                        >
                           Cancel request <FaUserMinus />
                         </button>
                       </div>
