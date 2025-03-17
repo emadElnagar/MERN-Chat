@@ -29,6 +29,20 @@ export const createChat = async (req, res) => {
     const savedChat = await newChat.save();
     res.status(201).json(savedChat);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(401).json({ message: error.message });
+  }
+};
+
+// Get all chats
+export const getChats = async (req, res) => {
+  try {
+    const chats = await Chat.find()
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password")
+      .populate("latestMessage")
+      .sort({ updatedAt: -1 });
+    res.json(chats);
+  } catch (error) {
+    res.status(401).json({ message: error.message });
   }
 };
