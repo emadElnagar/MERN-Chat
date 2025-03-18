@@ -36,12 +36,14 @@ export const createChat = async (req, res) => {
 // Get all chats
 export const getChats = async (req, res) => {
   try {
-    const chats = await Chat.find()
+    const chats = await Chat.find({
+      users: { $elemMatch: { $eq: req.user._id } },
+    })
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
       .populate("latestMessage")
       .sort({ updatedAt: -1 });
-    res.json(chats);
+    res.status(200).json(chats);
   } catch (error) {
     res.status(401).json({ message: error.message });
   }
