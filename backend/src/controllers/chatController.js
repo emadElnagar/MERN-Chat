@@ -17,17 +17,26 @@ export const createChat = async (req, res) => {
   }
 
   const isGroupChat = users.length > 2;
+  const sortedUsers = users.sort();
 
   try {
+    const existingChat = await Chat.findOne({
+      users: { $all: sortedUsers },
+      isGroupChat,
+    });
+    if (existingChat) {
+      return res
+        .status(400)
+        .json({ message: "Chat already exists with these users" });
+    }
     const newChat = new Chat({
       chatName,
       isGroupChat,
       users,
       groupAdmin,
     });
-
-    const savedChat = await newChat.save();
-    res.status(201).json(savedChat);
+    await newChat.save();
+    return res.status(201).json(newChat);
   } catch (error) {
     res.status(401).json({ message: error.message });
   }
@@ -41,7 +50,7 @@ export const getChats = async (req, res) => {
     })
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
-      .populate("latestMessage")
+      .populate("messages")
       .sort({ updatedAt: -1 });
     res.status(200).json(chats);
   } catch (error) {
