@@ -57,3 +57,20 @@ export const getChats = async (req, res) => {
     res.status(401).json({ message: error.message });
   }
 };
+
+// Get single chat
+export const getChat = async (req, res) => {
+  const { chatId } = req.params;
+  try {
+    const chat = await Chat.findById(chatId)
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password")
+      .populate("messages");
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
+};
