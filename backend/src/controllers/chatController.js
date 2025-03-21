@@ -4,9 +4,6 @@ import Chat from "../models/chat.js";
 export const createChat = async (req, res) => {
   const { chatName, users, groupAdmin } = req.body;
 
-  if (!chatName) {
-    return res.status(400).json({ message: "Chat name is required" });
-  }
   if (!users) {
     return res.status(400).json({ message: "Users are required" });
   }
@@ -59,7 +56,7 @@ export const getChats = async (req, res) => {
 };
 
 // Get single chat
-export const getChat = async (req, res) => {
+export const getSingleChat = async (req, res) => {
   const { chatId } = req.params;
   try {
     const chat = await Chat.findById(chatId)

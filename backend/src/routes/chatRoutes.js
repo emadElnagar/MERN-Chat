@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   createChat,
   getChats,
-  getChat,
+  getSingleChat,
 } from "../controllers/chatController.js";
 import { isAuth } from "../middlewares/authMiddleWare.js";
 
@@ -15,6 +15,6 @@ chatRouter.post("/", isAuth, createChat);
 chatRouter.get("/", isAuth, getChats);
 
 // Get single chat
-chatRouter.get("/:id", isAuth, getChat);
+chatRouter.get("/:id", isAuth, getSingleChat);
 
 export default chatRouter;
