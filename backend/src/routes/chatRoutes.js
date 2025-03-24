@@ -3,6 +3,7 @@ import {
   createChat,
   getChats,
   getSingleChat,
+  renameChat,
 } from "../controllers/chatController.js";
 import { isAuth } from "../middlewares/authMiddleWare.js";
 
@@ -16,5 +17,8 @@ chatRouter.get("/", isAuth, getChats);
 
 // Get single chat
 chatRouter.get("/:id", isAuth, getSingleChat);
+
+// Rename chat
+chatRouter.patch("/:id", isAuth, renameChat);
 
 export default chatRouter;

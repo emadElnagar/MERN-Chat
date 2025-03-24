@@ -1,4 +1,4 @@
-import Chat from "../models/chat.js";
+import Chat from "../models/Chat.js";
 
 // Create a new chat
 export const createChat = async (req, res) => {
@@ -66,6 +66,23 @@ export const getSingleChat = async (req, res) => {
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
+};
+
+// Rename chat
+export const renameChat = async (req, res) => {
+  const { chatId } = req.params;
+  const { chatName } = req.body;
+  try {
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+    chat.chatName = chatName;
+    await chat.save();
     res.status(200).json(chat);
   } catch (error) {
     res.status(401).json({ message: error.message });
