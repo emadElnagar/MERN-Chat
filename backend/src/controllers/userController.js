@@ -169,20 +169,8 @@ export const SearchUser = async (req, res) => {
 // Send friend request
 export const SendFriendRequest = async (req, res) => {
   const { receiver } = req.body;
-  const token = req.headers["authorization"];
-  if (!token) {
-    return res
-      .status(400)
-      .json({ message: "Token is required in the Authorization header" });
-  }
   try {
-    const tokenWithoutBearer = token.split(" ")[1];
-    if (!tokenWithoutBearer) {
-      return res
-        .status(400)
-        .json({ message: "Token is not properly formatted" });
-    }
-    const sender = JWT.verify(tokenWithoutBearer, process.env.JWT_SECRET)._id;
+    const sender = req.user._id;
     await User.updateOne(
       { _id: sender },
       { $addToSet: { sentRequests: receiver } }
@@ -201,20 +189,8 @@ export const SendFriendRequest = async (req, res) => {
 // Cancel friend request
 export const CancelFriendRequest = async (req, res) => {
   const { receiver } = req.body;
-  const token = req.headers["authorization"];
-  if (!token) {
-    return res
-      .status(400)
-      .json({ message: "Token is required in the Authorization header" });
-  }
   try {
-    const tokenWithoutBearer = token.split(" ")[1];
-    if (!tokenWithoutBearer) {
-      return res
-        .status(400)
-        .json({ message: "Token is not properly formatted" });
-    }
-    const sender = JWT.verify(tokenWithoutBearer, process.env.JWT_SECRET)._id;
+    const sender = req.user._id;
     await User.updateOne(
       { _id: sender },
       { $pull: { sentRequests: receiver } }
@@ -233,20 +209,8 @@ export const CancelFriendRequest = async (req, res) => {
 // Reject friend request
 export const RejectFriendRequest = async (req, res) => {
   const { sender } = req.body;
-  const token = req.headers["authorization"];
-  if (!token) {
-    return res
-      .status(400)
-      .json({ message: "Token is required in the Authorization header" });
-  }
   try {
-    const tokenWithoutBearer = token.split(" ")[1];
-    if (!tokenWithoutBearer) {
-      return res
-        .status(400)
-        .json({ message: "Token is not properly formatted" });
-    }
-    const receiver = JWT.verify(tokenWithoutBearer, process.env.JWT_SECRET)._id;
+    const receiver = req.user._id;
     await User.updateOne(
       { _id: sender },
       { $pull: { sentRequests: receiver } }
@@ -265,20 +229,8 @@ export const RejectFriendRequest = async (req, res) => {
 // Accept friend request
 export const AcceptFriendRequest = async (req, res) => {
   const { sender } = req.body;
-  const token = req.headers["authorization"];
-  if (!token) {
-    return res
-      .status(400)
-      .json({ message: "Token is required in the Authorization header" });
-  }
   try {
-    const tokenWithoutBearer = token.split(" ")[1];
-    if (!tokenWithoutBearer) {
-      return res
-        .status(400)
-        .json({ message: "Token is not properly formatted" });
-    }
-    const receiver = JWT.verify(tokenWithoutBearer, process.env.JWT_SECRET)._id;
+    const receiver = req.user._id;
     await User.updateOne(
       { _id: sender },
       { $pull: { sentRequests: receiver } }
@@ -298,21 +250,8 @@ export const AcceptFriendRequest = async (req, res) => {
 
 // Get friends
 export const GetFriends = async (req, res) => {
-  const token = req.headers["authorization"];
-  if (!token) {
-    return res
-      .status(400)
-      .json({ message: "Token is required in the Authorization header" });
-  }
   try {
-    const tokenWithoutBearer = token.split(" ")[1];
-    if (!tokenWithoutBearer) {
-      return res
-        .status(400)
-        .json({ message: "Token is not properly formatted" });
-    }
-    const decoded = JWT.verify(tokenWithoutBearer, process.env.JWT_SECRET);
-    const userId = decoded._id;
+    const userId = req.user._id;
     const user = await User.findById(userId);
     const friends = await User.find({ _id: { $in: user.friends } }).select(
       "_id firstName lastName email image"
@@ -338,20 +277,8 @@ export const GetFriends = async (req, res) => {
 // Remove friend
 export const RemoveFriend = async (req, res) => {
   const { friendId } = req.body;
-  const token = req.headers["authorization"];
-  if (!token) {
-    return res
-      .status(400)
-      .json({ message: "Token is required in the Authorization header" });
-  }
   try {
-    const tokenWithoutBearer = token.split(" ")[1];
-    if (!tokenWithoutBearer) {
-      return res
-        .status(400)
-        .json({ message: "Token is not properly formatted" });
-    }
-    const userId = JWT.verify(tokenWithoutBearer, process.env.JWT_SECRET)._id;
+    const userId = req.user._id;
     await User.updateOne({ _id: userId }, { $pull: { friends: friendId } });
     await User.updateOne({ _id: friendId }, { $pull: { friends: userId } });
   } catch (error) {
