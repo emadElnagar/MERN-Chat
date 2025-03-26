@@ -4,6 +4,7 @@ import {
   getChats,
   getSingleChat,
   renameChat,
+  addUserToChat,
 } from "../controllers/chatController.js";
 import { isAuth } from "../middlewares/authMiddleWare.js";
 
@@ -20,5 +21,8 @@ chatRouter.get("/:id", isAuth, getSingleChat);
 
 // Rename chat
 chatRouter.patch("/:id", isAuth, renameChat);
+
+// Add user to chat
+chatRouter.patch("/:id/addUser", isAuth, addUserToChat);
 
 export default chatRouter;

@@ -88,3 +88,28 @@ export const renameChat = async (req, res) => {
     res.status(401).json({ message: error.message });
   }
 };
+
+// Add user to chat
+export const addUserToChat = async (req, res) => {
+  const { chatId } = req.params;
+  const { userId } = req.body;
+  try {
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+    if (chat.isGroupChat === false) {
+      return res
+        .status(400)
+        .json({ message: "Cannot add user to single chat" });
+    }
+    if (chat.users.includes(userId)) {
+      return res.status(400).json({ message: "User already in chat" });
+    }
+    chat.users.push(userId);
+    await chat.save();
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
+};
