@@ -113,3 +113,28 @@ export const addUserToChat = async (req, res) => {
     res.status(401).json({ message: error.message });
   }
 };
+
+// Remove user from chat
+export const RemoveUserFromChat = async (req, res) => {
+  const { chatId } = req.params;
+  const { userId } = req.body;
+  try {
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+    if (chat.isGroupChat === false) {
+      return res
+        .status(400)
+        .json({ message: "Cannot remove user from single chat" });
+    }
+    if (!chat.users.includes(userId)) {
+      return res.status(400).json({ message: "User not in chat" });
+    }
+    chat.users = chat.users.filter((user) => user !== userId);
+    await chat.save();
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
+};
