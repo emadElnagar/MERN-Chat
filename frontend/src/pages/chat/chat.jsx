@@ -1,15 +1,21 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { IoSend } from "react-icons/io5";
+import { useEffect } from "react";
+import { FetchChats } from "../../features/ChatFeatures";
 
 const ChatPage = () => {
   const { user } = useSelector((state) => state.user);
+  const { chats, isLoading, error } = useSelector((state) => state.chat);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   if (!user) {
     navigate("/users/login");
   }
-
+  useEffect(() => {
+    dispatch(FetchChats(user._id));
+  }, [dispatch, user._id]);
   return (
     <>
       <Helmet>
