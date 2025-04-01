@@ -115,7 +115,7 @@ export const addUserToChat = async (req, res) => {
 };
 
 // Remove user from chat
-export const RemoveUserFromChat = async (req, res) => {
+export const removeUserFromChat = async (req, res) => {
   const { chatId } = req.params;
   const { userId } = req.body;
   try {

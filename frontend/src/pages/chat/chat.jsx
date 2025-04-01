@@ -16,8 +16,18 @@ const ChatPage = () => {
       </Helmet>
       <div className="container">
         <div className="chat-container">
-          <div className="chat-box"></div>
-          <div className="message-box"></div>
+          <div className="chat-list">
+            <div className="chat">
+              <img src="https://placehold.co/50x50" alt="User" />
+              <div className="chat-info">
+                <span>
+                  <b>John Doe</b>
+                </span>
+                <p>Last message...</p>
+              </div>
+            </div>
+          </div>
+          <div className="current-chat"></div>
         </div>
       </div>
     </>

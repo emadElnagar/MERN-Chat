@@ -229,19 +229,32 @@ a {
 }
 
 .chat-container {
-  width: calc(100% - 90px);
-  float: right;
-}
-
-.chat-box {
-  height: calc(100vh - 110px);
-  border: 1px solid var(--primary);
-}
-
-.message-box {
-  height: 40px;
-  border: 1px solid var(--primary);
-  border-top: none;
+  width: 100%;
+  height: calc(100vh - 60px);
+  display: flex;
+  width: 100%;
+  .chat-list {
+    width: 25%;
+    padding-inline-start: 30px;
+    border-inline-end: 1px solid #ccc;
+    .chat {
+      --space: 5px;
+      display: flex;
+      width: calc(100% - (var(--space) * 3));
+      border-bottom: 1px solid #ccc;
+      padding: var(--space);
+      cursor: pointer;
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-inline-end: 5px;
+      }
+    }
+  }
+  .current-chat {
+    width: 75%;
+  }
 }
 
 @media (prefers-color-scheme: light) {
