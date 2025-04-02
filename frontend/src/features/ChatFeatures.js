@@ -48,6 +48,25 @@ export const FetchSingleChat = createAsyncThunk(
   }
 );
 
+// Create chat
+export const CreateChat = createAsyncThunk(
+  "chat/CreateChat",
+  async (chatData, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.post(`${url}`, chatData, config);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const chatSlice = createSlice({
   name: "chat",
   initialState,
@@ -57,10 +76,10 @@ const chatSlice = createSlice({
       // Fetch chats
       .addCase(FetchChats.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
       })
       .addCase(FetchChats.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.error = null;
         state.chats = action.payload;
       })
       .addCase(FetchChats.rejected, (state, action) => {
@@ -70,13 +89,26 @@ const chatSlice = createSlice({
       // Fetch single chat
       .addCase(FetchSingleChat.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
       })
       .addCase(FetchSingleChat.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.error = null;
         state.chat = action.payload;
       })
       .addCase(FetchSingleChat.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Create chat
+      .addCase(CreateChat.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(CreateChat.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.chats.push(action.payload);
+      })
+      .addCase(CreateChat.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
