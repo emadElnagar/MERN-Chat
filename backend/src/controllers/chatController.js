@@ -47,7 +47,7 @@ export const getChats = async (req, res) => {
     })
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
-      .populate("messages")
+      .populate("lastMessage")
       .sort({ updatedAt: -1 });
     res.status(200).json(chats);
   } catch (error) {
@@ -62,7 +62,7 @@ export const getSingleChat = async (req, res) => {
     const chat = await Chat.findById(chatId)
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
-      .populate("messages");
+      .populate("lastMessage");
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
