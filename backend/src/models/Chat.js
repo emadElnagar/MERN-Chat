@@ -5,9 +5,6 @@ const chatSchema = mongoose.Schema(
     chatName: {
       type: String,
       trim: true,
-      default: function () {
-        return this.user.map((user) => user.name).join(",");
-      },
     },
     isGroupChat: { type: Boolean, default: false },
     users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

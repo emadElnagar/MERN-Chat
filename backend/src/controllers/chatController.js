@@ -2,7 +2,7 @@ import Chat from "../models/Chat.js";
 
 // Create a new chat
 export const createChat = async (req, res) => {
-  const { chatName, users } = req.body;
+  let { chatName, users } = req.body;
   const groupAdmin = req.user._id;
 
   if (!users) {
@@ -12,6 +12,10 @@ export const createChat = async (req, res) => {
     return res
       .status(400)
       .json({ message: "A chat must have at least two users" });
+  }
+
+  if (!chatName) {
+    chatName = req.body.users.map((user) => user).join(",");
   }
 
   const isGroupChat = users.length > 2;
