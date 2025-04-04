@@ -2,7 +2,8 @@ import Chat from "../models/Chat.js";
 
 // Create a new chat
 export const createChat = async (req, res) => {
-  const { chatName, users, groupAdmin } = req.body;
+  const { chatName, users } = req.body;
+  const groupAdmin = req.user._id;
 
   if (!users) {
     return res.status(400).json({ message: "Users are required" });

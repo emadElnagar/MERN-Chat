@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { FetchChats } from "../../features/ChatFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
+import UserAvatar from "../../assets/user-avatar.png";
 
 const ChatPage = () => {
   const { user } = useSelector((state) => state.user);
@@ -33,9 +34,40 @@ const ChatPage = () => {
             ) : (
               chats.map((chat) => (
                 <div className="chat" key={chat._id}>
-                  <img src="https://placehold.co/50x50" alt="User" />
+                  <img
+                    src={
+                      chat.isGroupChat
+                        ? chat.groupAdmin.image
+                          ? "http://localhost:5000/" + chat.groupAdmin.image
+                          : UserAvatar
+                        : user._id === chat.users[0]._id
+                        ? chat.users[1].image
+                          ? "http://localhost:5000/" + chat.users[1].image
+                          : UserAvatar
+                        : chat.users[0].image
+                        ? "http://localhost:5000/" + chat.users[0].image
+                        : UserAvatar
+                    }
+                    alt="Chat"
+                  />
                   <div className="chat-info">
-                    <h4>{chat.chatName}</h4>
+                    {chat.isGroupChat ? (
+                      <span>
+                        <b>{chat.chatName}</b>
+                      </span>
+                    ) : user._id === chat.users[0]._id ? (
+                      <span>
+                        <b>
+                          {chat.users[1].firstName} {chat.users[1].lastName}
+                        </b>
+                      </span>
+                    ) : (
+                      <span>
+                        <b>
+                          {chat.users[0].firstName} {chat.users[0].lastName}
+                        </b>
+                      </span>
+                    )}
                     <p>{chat.lastMessage}</p>
                   </div>
                 </div>
