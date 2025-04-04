@@ -15,6 +15,11 @@ export const createChat = async (req, res) => {
   }
 
   if (!chatName) {
+    if (users.length > 2) {
+      return res
+        .status(400)
+        .json({ message: "Chat name is required for group chats" });
+    }
     chatName = req.body.users.map((user) => user).join(",");
   }
 

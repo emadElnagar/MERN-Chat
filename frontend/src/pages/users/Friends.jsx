@@ -14,12 +14,14 @@ import {
   Unfriend,
   GetFriends,
 } from "../../features/UserFeatures";
+import { CreateChat } from "../../features/ChatFeatures";
 
 const FriendsPage = () => {
   const { user, error, isLoading, friendsList } = useSelector(
     (state) => state.user
   );
   const [tab, setTab] = useState("friends");
+  const [chatUsers, setChatUsers] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   if (!user) {
@@ -48,6 +50,18 @@ const FriendsPage = () => {
   const handleUnfriend = (id) => {
     dispatch(Unfriend(id));
     dispatch(GetFriends());
+  };
+  // Create chat
+  const createChat = () => {
+    const chatData = {
+      users: chatUsers,
+    };
+    dispatch(CreateChat(chatData))
+      .unwrap()
+      .then(() => {
+        setChatUsers([]);
+        navigate("/");
+      });
   };
   return (
     <Fragment>
@@ -104,7 +118,14 @@ const FriendsPage = () => {
                         </h4>
                       </div>
                       <div className="button">
-                        <button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            chatUsers.push(friend._id);
+                            chatUsers.push(user._id);
+                            createChat();
+                          }}
+                        >
                           Chat <IoIosChatboxes />
                         </button>
                         <button
