@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { IoSend } from "react-icons/io5";
 import { useEffect } from "react";
-import { FetchChats } from "../../features/ChatFeatures";
+import { FetchChats, FetchSingleChat } from "../../features/ChatFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
 
 const ChatPage = () => {
   const { user } = useSelector((state) => state.user);
-  const { chats, isLoading, error } = useSelector((state) => state.chat);
+  const { chats, chat, isLoading, error } = useSelector((state) => state.chat);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   if (!user) {
@@ -19,6 +19,10 @@ const ChatPage = () => {
   useEffect(() => {
     dispatch(FetchChats(user._id));
   }, [dispatch, user._id]);
+  const getChat = (id) => {
+    dispatch(FetchSingleChat(id));
+  };
+  console.log(chat);
   return (
     <>
       <Helmet>
@@ -33,7 +37,11 @@ const ChatPage = () => {
               <ErrorBox message={error.message} />
             ) : (
               chats.map((chat) => (
-                <div className="chat" key={chat._id}>
+                <div
+                  className="chat"
+                  key={chat._id}
+                  onClick={() => getChat(chat._id)}
+                >
                   <img
                     src={
                       chat.isGroupChat

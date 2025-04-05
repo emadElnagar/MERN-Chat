@@ -67,9 +67,9 @@ export const getChats = async (req, res) => {
 
 // Get single chat
 export const getSingleChat = async (req, res) => {
-  const { chatId } = req.params;
+  const { id } = req.params;
   try {
-    const chat = await Chat.findById(chatId)
+    const chat = await Chat.findById(id)
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
       .populate("lastMessage");
