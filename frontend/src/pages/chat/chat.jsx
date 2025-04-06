@@ -22,7 +22,6 @@ const ChatPage = () => {
   const getChat = (id) => {
     dispatch(FetchSingleChat(id));
   };
-  console.log(chat);
   return (
     <>
       <Helmet>

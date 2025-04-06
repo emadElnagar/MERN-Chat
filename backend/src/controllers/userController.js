@@ -25,7 +25,7 @@ const generateToken = (user) => {
 export const userRegister = async (req, res) => {
   const takenEmail = await User.findOne({ email: req.body.email });
   if (takenEmail) {
-    res.status(401).json({
+    return res.status(401).json({
       message: "This email have already taken, please try another one",
     });
   }
@@ -98,7 +98,7 @@ export const ChangePassword = async (req, res) => {
       user.password
     );
     if (!validate) {
-      res.status(401).json({
+      return res.status(401).json({
         message: "Current password is not correct",
       });
     }
