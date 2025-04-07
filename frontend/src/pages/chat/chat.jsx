@@ -10,7 +10,8 @@ import UserAvatar from "../../assets/user-avatar.png";
 
 const ChatPage = () => {
   const { user } = useSelector((state) => state.user);
-  const { chats, chat, isLoading, error } = useSelector((state) => state.chat);
+  const { chats, isLoading, error } = useSelector((state) => state.chat);
+  let { chat } = useSelector((state) => state.chat);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   if (!user) {
@@ -22,6 +23,9 @@ const ChatPage = () => {
   const getChat = (id) => {
     dispatch(FetchSingleChat(id));
   };
+  if (chats && !chat) {
+    chat = chats[0];
+  }
   return (
     <>
       <Helmet>
