@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import userRouter from "./routes/userRoutes.js";
 import chatRouter from "./routes/chatRoutes.js";
+import messageRouter from "./routes/messageRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -18,5 +19,6 @@ mongoose
 
 app.use("/api/users", userRouter);
 app.use("/api/chats", chatRouter);
+app.use("/api/messages", messageRouter);
 
 app.listen(port);
