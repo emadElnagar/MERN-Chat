@@ -67,6 +67,25 @@ export const CreateChat = createAsyncThunk(
   }
 );
 
+// Rename chat
+export const RenameChat = createAsyncThunk(
+  "chat/RenameChat",
+  async (chat, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.patch(`${url}/${chat._id}`, chat, config);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const chatSlice = createSlice({
   name: "chat",
   initialState,
@@ -109,6 +128,19 @@ const chatSlice = createSlice({
         state.chats.push(action.payload);
       })
       .addCase(CreateChat.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Rename chat
+      .addCase(RenameChat.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(RenameChat.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.chat = action.payload;
+      })
+      .addCase(RenameChat.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
