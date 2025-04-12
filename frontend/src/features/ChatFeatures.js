@@ -78,7 +78,11 @@ export const RenameChat = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       };
-      const response = await axios.patch(`${url}/${chat._id}`, chat, config);
+      const response = await axios.patch(
+        `${url}/${chat._id}`,
+        { chatName: chat.chatName },
+        config
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.message);
