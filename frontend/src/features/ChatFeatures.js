@@ -90,6 +90,29 @@ export const RenameChat = createAsyncThunk(
   }
 );
 
+// Add user to chat
+export const AddUser = createAsyncThunk(
+  "chat/AddUser",
+  async (data, { rejectWithValue }) => {
+    try {
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.patch(
+        `${url}/${data.chatId}/addUser`,
+        { userId: data.userId },
+        config
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const chatSlice = createSlice({
   name: "chat",
   initialState,
@@ -145,6 +168,19 @@ const chatSlice = createSlice({
         state.chat = action.payload;
       })
       .addCase(RenameChat.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Add user to caht
+      .addCase(AddUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(AddUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+        state.chat = action.payload;
+      })
+      .addCase(AddUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
