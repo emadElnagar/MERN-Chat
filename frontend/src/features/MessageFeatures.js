@@ -29,12 +29,26 @@ export const newMessage = createAsyncThunk(
   }
 );
 
+// Get all messages
+export const getMessages = createAsyncThunk(
+  "message/getMessages",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${url}/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const messageSlice = createSlice({
   name: "message",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // new message
       .addCase(newMessage.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -46,7 +60,21 @@ const messageSlice = createSlice({
       })
       .addCase(newMessage.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload;
+        state.error = action.error;
+      })
+      // get messages
+      .addCase(getMessages.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getMessages.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.messages = action.payload;
+      })
+      .addCase(getMessages.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
       });
   },
 });
