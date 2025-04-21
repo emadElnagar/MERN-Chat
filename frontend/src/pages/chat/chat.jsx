@@ -2,13 +2,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { IoSend } from "react-icons/io5";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FetchChats, FetchSingleChat } from "../../features/ChatFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
 
 const ChatPage = () => {
+  const [newMessage, setNewmessage] = useState("");
   const { user } = useSelector((state) => state.user);
   const { chats, isLoading, error } = useSelector((state) => state.chat);
   let { chat } = useSelector((state) => state.chat);
@@ -26,6 +27,19 @@ const ChatPage = () => {
   if (chats && !chat) {
     chat = chats[0];
   }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (newMessage.trim() === "") {
+      return;
+    }
+    const messageData = {
+      chatId: chat._id,
+      content: newMessage,
+    };
+    dispatch(newMessage(messageData)).unwrap();
+    setNewmessage("");
+  };
+
   return (
     <>
       <Helmet>
@@ -97,9 +111,15 @@ const ChatPage = () => {
               </div>
             </div>
             <div className="chat-form">
-              <form>
-                <input type="text" placeholder="Type a message..." />
-                <button>
+              <form type="POST" onSubmit={(e) => handleSubmit(e)}>
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  onChange={(e) => {
+                    setNewmessage(e.target.value);
+                  }}
+                />
+                <button type="submit">
                   <IoSend />
                 </button>
               </form>
