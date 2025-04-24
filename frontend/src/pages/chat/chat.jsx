@@ -33,7 +33,7 @@ const ChatPage = () => {
       return;
     }
     const messageData = {
-      chatId: chat._id,
+      chat: chat._id,
       content: newMessage,
     };
     dispatch(newMessage(messageData)).unwrap();
