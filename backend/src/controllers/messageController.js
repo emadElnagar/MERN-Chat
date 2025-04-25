@@ -1,8 +1,9 @@
 import Message from "../models/Message.js";
 import Chat from "../models/Chat.js";
+import User from "../models/User.js";
 
 // Create a new message
-export const NewMessage = async () => {
+export const NewMessage = async (req, res) => {
   const { content, chat } = req.body;
   const sender = req.user._id;
 
@@ -41,11 +42,12 @@ export const NewMessage = async () => {
 };
 
 // Get chat messages
-export const getMessages = async () => {
+export const getMessages = async (req, res) => {
   try {
-    const messages = await Message.find({ chat: req.params.chatid })
-      .populate("sender", "firstName lastName image email")
-      .populate("chat");
+    const messages = await Message.find({ chat: req.params.id })
+      .populate("sender", "_id firstName lastName image email")
+      .populate("chat")
+      .sort({ createdAt: 1 });
     res.status(200).json(messages);
   } catch (error) {
     res.status(401).json({

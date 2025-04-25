@@ -8,6 +8,6 @@ const messageRouter = Router();
 messageRouter.post("/", isAuth, NewMessage);
 
 // Get chat messages
-messageRouter.get("/id", isAuth, getMessages);
+messageRouter.get("/:id", isAuth, getMessages);
 
 export default messageRouter;
