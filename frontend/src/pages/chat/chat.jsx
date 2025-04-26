@@ -7,9 +7,10 @@ import { FetchChats, FetchSingleChat } from "../../features/ChatFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
+import { newMessage } from "../../features/MessageFeatures";
 
 const ChatPage = () => {
-  const [newMessage, setNewmessage] = useState("");
+  const [message, setMessage] = useState("");
   const { user } = useSelector((state) => state.user);
   const { chats, isLoading, error } = useSelector((state) => state.chat);
   let { chat } = useSelector((state) => state.chat);
@@ -29,15 +30,15 @@ const ChatPage = () => {
   }
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (newMessage.trim() === "") {
+    if (message.trim() === "") {
       return;
     }
     const messageData = {
       chat: chat._id,
-      content: newMessage,
+      content: message,
     };
     dispatch(newMessage(messageData)).unwrap();
-    setNewmessage("");
+    setMessage("");
   };
 
   return (
@@ -93,7 +94,7 @@ const ChatPage = () => {
                         </b>
                       </span>
                     )}
-                    <p>{chat.lastMessage}</p>
+                    <p>{chat.lastMessage && chat.lastMessage.content}</p>
                   </div>
                 </div>
               ))
@@ -116,7 +117,7 @@ const ChatPage = () => {
                   type="text"
                   placeholder="Type a message..."
                   onChange={(e) => {
-                    setNewmessage(e.target.value);
+                    setMessage(e.target.value);
                   }}
                 />
                 <button type="submit">

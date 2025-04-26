@@ -208,15 +208,15 @@ const chatSlice = createSlice({
         state.error = action.error;
       })
       // remove user from caht
-      .addCase(AddUser.pending, (state) => {
+      .addCase(RemoveUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(AddUser.fulfilled, (state, action) => {
+      .addCase(RemoveUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
         state.chat = action.payload;
       })
-      .addCase(AddUser.rejected, (state, action) => {
+      .addCase(RemoveUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
