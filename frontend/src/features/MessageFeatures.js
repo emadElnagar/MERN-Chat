@@ -34,7 +34,13 @@ export const getMessages = createAsyncThunk(
   "message/getMessages",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${url}/${id}`);
+      const token = sessionStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.get(`${url}/${id}`, config);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.message);

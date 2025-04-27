@@ -7,7 +7,7 @@ import { FetchChats, FetchSingleChat } from "../../features/ChatFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
-import { newMessage } from "../../features/MessageFeatures";
+import { getMessages, newMessage } from "../../features/MessageFeatures";
 
 const ChatPage = () => {
   const [message, setMessage] = useState("");
@@ -19,15 +19,19 @@ const ChatPage = () => {
   if (!user) {
     navigate("/users/login");
   }
+  // Fetch all chats
   useEffect(() => {
     dispatch(FetchChats(user._id));
   }, [dispatch, user._id]);
+  // Fetch Single chat
   const getChat = (id) => {
     dispatch(FetchSingleChat(id));
   };
+  // Default chat
   if (chats && !chat) {
     chat = chats[0];
   }
+  // Send message
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim() === "") {
@@ -37,9 +41,15 @@ const ChatPage = () => {
       chat: chat._id,
       content: message,
     };
-    dispatch(newMessage(messageData)).unwrap();
+    dispatch(newMessage(messageData));
     setMessage("");
   };
+  // Fetch messages
+  useEffect(() => {
+    if (chat) {
+      dispatch(getMessages(chat._id));
+    }
+  }, [dispatch, chat]);
 
   return (
     <>
