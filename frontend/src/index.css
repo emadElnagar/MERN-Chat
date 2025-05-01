@@ -256,15 +256,13 @@ a {
     width: 75%;
     .chat-window {
       height: calc(100vh - 110px);
-      padding: 0 10px;
+      padding: 20px 0;
       .message {
-        margin: 5px 0;
+        margin: 5px;
       }
       .message-received {
         display: flex;
-        padding: 10px;
-        margin: 10px 0;
-        max-width: calc(90% - 50px);
+        max-width: calc(100% - 50px);
         img {
           width: 50px;
           height: 50px;
@@ -280,7 +278,7 @@ a {
       .message-sent {
         display: flex;
         flex-direction: row-reverse;
-        max-width: 90%;
+        max-width: 100%;
         .message-content {
           background: #5f99ae;
           border-radius: 14px 14px 0 14px;

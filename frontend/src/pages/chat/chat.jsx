@@ -8,6 +8,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
 import { getMessages, newMessage } from "../../features/MessageFeatures";
+import ScrollableFeed from "react-scrollable-feed";
 
 const ChatPage = () => {
   const [message, setMessage] = useState("");
@@ -113,30 +114,33 @@ const ChatPage = () => {
           </div>
           <div className="current-chat">
             <div className="chat-window">
-              {chat && messages && messages.length > 0
-                ? messages.map((message) => (
-                    <div
-                      className={
-                        message.sender._id === user._id
-                          ? "message message-sent"
-                          : "message message-received"
-                      }
-                      key={message._id}
-                    >
-                      {message.sender._id !== user._id && (
-                        <img
-                          src={
-                            message.sender.image
-                              ? "http://localhost:5000/" + message.sender.image
-                              : UserAvatar
-                          }
-                          alt="User"
-                        />
-                      )}
-                      <p className="message-content">{message.content}</p>
-                    </div>
-                  ))
-                : null}
+              <ScrollableFeed>
+                {chat && messages && messages.length > 0
+                  ? messages.map((message) => (
+                      <div
+                        className={
+                          message.sender._id === user._id
+                            ? "message message-sent"
+                            : "message message-received"
+                        }
+                        key={message._id}
+                      >
+                        {message.sender._id !== user._id && (
+                          <img
+                            src={
+                              message.sender.image
+                                ? "http://localhost:5000/" +
+                                  message.sender.image
+                                : UserAvatar
+                            }
+                            alt="User"
+                          />
+                        )}
+                        <p className="message-content">{message.content}</p>
+                      </div>
+                    ))
+                  : null}
+              </ScrollableFeed>
             </div>
             <div className="chat-form">
               <form type="POST" onSubmit={(e) => handleSubmit(e)}>
@@ -146,6 +150,7 @@ const ChatPage = () => {
                   onChange={(e) => {
                     setMessage(e.target.value);
                   }}
+                  value={message}
                 />
                 <button type="submit">
                   <IoSend />
