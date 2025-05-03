@@ -70,113 +70,115 @@ const SearchPage = () => {
         <title>LiveTalk-search</title>
       </Helmet>
       <div className="container">
-        <form onSubmit={handleSearch} className="search">
-          <input
-            type="text"
-            placeholder="Search users"
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button type="submit">
-            <IoSearchSharp />
-          </button>
-        </form>
-        <div className="users-list">
-          <ul>
-            {isLoading ? (
-              <LoadingScreen />
-            ) : error ? (
-              <ErrorBox message={error} />
-            ) : (
-              searchedUsers &&
-              searchedUsers.users &&
-              searchedUsers.users.map((searchedUser, index) => (
-                <li key={index}>
-                  <div className="user image">
-                    <img
-                      src={`${
-                        searchedUser.image
-                          ? "http://localhost:5000/" + searchedUser.image
-                          : UserAvatar
-                      }`}
-                      alt="problem showing image"
-                    />
-                  </div>
-                  <div className="user-name">
-                    <h4>
-                      {searchedUser.firstName} {searchedUser.lastName}
-                    </h4>
-                  </div>
-                  <div className="button">
-                    {searchedUser && friendsList && (
-                      <>
-                        {friendsList.friends.find(
-                          (friend) => friend._id === searchedUser._id
-                        ) ? (
-                          <>
-                            <button>
-                              Chat <IoIosChatboxes />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleUnfriend(searchedUser._id);
-                              }}
-                            >
-                              Unfriend <FaUserTimes />
-                            </button>
-                          </>
-                        ) : friendsList.sentRequests.find(
-                            (sentRequest) =>
-                              sentRequest._id === searchedUser._id
+        <section>
+          <form onSubmit={handleSearch} className="search">
+            <input
+              type="text"
+              placeholder="Search users"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <button type="submit">
+              <IoSearchSharp />
+            </button>
+          </form>
+          <div className="users-list">
+            <ul>
+              {isLoading ? (
+                <LoadingScreen />
+              ) : error ? (
+                <ErrorBox message={error} />
+              ) : (
+                searchedUsers &&
+                searchedUsers.users &&
+                searchedUsers.users.map((searchedUser, index) => (
+                  <li key={index}>
+                    <div className="user image">
+                      <img
+                        src={`${
+                          searchedUser.image
+                            ? "http://localhost:5000/" + searchedUser.image
+                            : UserAvatar
+                        }`}
+                        alt="problem showing image"
+                      />
+                    </div>
+                    <div className="user-name">
+                      <h4>
+                        {searchedUser.firstName} {searchedUser.lastName}
+                      </h4>
+                    </div>
+                    <div className="button">
+                      {searchedUser && friendsList && (
+                        <>
+                          {friendsList.friends.find(
+                            (friend) => friend._id === searchedUser._id
                           ) ? (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleCancelRequest(searchedUser._id);
-                            }}
-                          >
-                            Cancel request <FaUserMinus />
-                          </button>
-                        ) : friendsList.friendRequests.find(
-                            (friendRequest) =>
-                              friendRequest._id === searchedUser._id
-                          ) ? (
-                          <>
+                            <>
+                              <button>
+                                Chat <IoIosChatboxes />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleUnfriend(searchedUser._id);
+                                }}
+                              >
+                                Unfriend <FaUserTimes />
+                              </button>
+                            </>
+                          ) : friendsList.sentRequests.find(
+                              (sentRequest) =>
+                                sentRequest._id === searchedUser._id
+                            ) ? (
                             <button
                               onClick={(e) => {
                                 e.preventDefault();
-                                handleAcceptRequest(searchedUser._id);
+                                handleCancelRequest(searchedUser._id);
                               }}
                             >
-                              Accept <IoIosCheckmark />
+                              Cancel request <FaUserMinus />
                             </button>
+                          ) : friendsList.friendRequests.find(
+                              (friendRequest) =>
+                                friendRequest._id === searchedUser._id
+                            ) ? (
+                            <>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleAcceptRequest(searchedUser._id);
+                                }}
+                              >
+                                Accept <IoIosCheckmark />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleRejectRequest(searchedUser._id);
+                                }}
+                              >
+                                Decline <IoIosClose />
+                              </button>
+                            </>
+                          ) : (
                             <button
                               onClick={(e) => {
                                 e.preventDefault();
-                                handleRejectRequest(searchedUser._id);
+                                handleAddFriend(searchedUser._id);
                               }}
                             >
-                              Decline <IoIosClose />
+                              Add friend <IoIosPersonAdd />
                             </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleAddFriend(searchedUser._id);
-                            }}
-                          >
-                            Add friend <IoIosPersonAdd />
-                          </button>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+        </section>
       </div>
     </Fragment>
   );
