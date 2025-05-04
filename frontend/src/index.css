@@ -5,6 +5,7 @@
   --primary: #121212;
   --background: #f1f1f1;
   --secondary: #646cff;
+  --info: #dbdbdb;
 }
 
 * {
@@ -30,6 +31,16 @@ section {
   margin-top: 50px;
 }
 
+input {
+  border: 1px solid #ccc;
+  padding: 10px 5px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--primary);
+  background: var(--info);
+}
+
 body {
   background: var(--background);
   color: var(--primary);
@@ -44,6 +55,7 @@ body {
   &:has(.dark) {
     --primary: #f1f1f1;
     --background: #121212;
+    --info: #1a1a1a;
   }
 }
 
@@ -98,6 +110,10 @@ button:focus-visible {
   @media (max-width: 576px) {
     max-width: 100%;
   }
+}
+
+.container-fluid {
+  width: calc(100vw - 40px);
 }
 
 header {
@@ -233,12 +249,14 @@ a {
 }
 
 .chat-container {
+  --height: 50px;
   width: 100%;
   height: calc(100vh - 60px);
   display: flex;
   width: 100%;
   .chat-list {
     width: 25%;
+    height: calc(100vh - var(--height));
     padding-inline-start: 30px;
     border-inline-end: 1px solid #ccc;
     .chat {
@@ -255,11 +273,19 @@ a {
         margin-inline-end: 5px;
       }
     }
+    .new-chat-btn {
+      color: var(--primary);
+      background: var(--secondary);
+      width: calc(100% + 10px);
+      height: var(--height);
+      border-radius: 0;
+      margin-inline-start: -10px;
+    }
   }
   .current-chat {
     width: 75%;
     .chat-window {
-      height: calc(100vh - 110px);
+      height: calc(100vh - 90px);
       padding: 20px 0;
       .message {
         margin: 5px;
@@ -274,7 +300,7 @@ a {
           margin-inline-end: 5px;
         }
         .message-content {
-          background: #dbdbdb;
+          background: var(--info);
           border-radius: 10px;
           max-width: 90%;
         }
@@ -294,10 +320,8 @@ a {
       }
     }
     .chat-form {
-      /* position: fixed; */
-      bottom: 10px;
-      left: 0;
-      width: 100%;
+      width: calc(100% - 60px);
+      margin: auto;
       form {
         display: flex;
         width: 100%;
@@ -340,7 +364,8 @@ form.search {
 
 .tab {
   margin-inline-end: 10px;
-  background: #f6f0f0;
+  background: var(--info);
+  color: var(--primary);
   &.active {
     background: var(--secondary);
     color: #fff;

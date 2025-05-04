@@ -58,59 +58,62 @@ const ChatPage = () => {
       <Helmet>
         <title>LiveTalk</title>
       </Helmet>
-      <div className="container">
+      <div className="container-fluid">
         <div className="chat-container">
           <div className="chat-list">
-            {isLoading === true ? (
-              <LoadingScreen />
-            ) : error ? (
-              <ErrorBox message={error.message} />
-            ) : (
-              chats.map((chat) => (
-                <div
-                  className="chat"
-                  key={chat._id}
-                  onClick={() => getChat(chat._id)}
-                >
-                  <img
-                    src={
-                      chat.isGroupChat
-                        ? chat.groupAdmin.image
-                          ? "http://localhost:5000/" + chat.groupAdmin.image
+            <ScrollableFeed>
+              {isLoading === true ? (
+                <LoadingScreen />
+              ) : error ? (
+                <ErrorBox message={error.message} />
+              ) : (
+                chats.map((chat) => (
+                  <div
+                    className="chat"
+                    key={chat._id}
+                    onClick={() => getChat(chat._id)}
+                  >
+                    <img
+                      src={
+                        chat.isGroupChat
+                          ? chat.groupAdmin.image
+                            ? "http://localhost:5000/" + chat.groupAdmin.image
+                            : UserAvatar
+                          : user._id === chat.users[0]._id
+                          ? chat.users[1].image
+                            ? "http://localhost:5000/" + chat.users[1].image
+                            : UserAvatar
+                          : chat.users[0].image
+                          ? "http://localhost:5000/" + chat.users[0].image
                           : UserAvatar
-                        : user._id === chat.users[0]._id
-                        ? chat.users[1].image
-                          ? "http://localhost:5000/" + chat.users[1].image
-                          : UserAvatar
-                        : chat.users[0].image
-                        ? "http://localhost:5000/" + chat.users[0].image
-                        : UserAvatar
-                    }
-                    alt="Chat"
-                  />
-                  <div className="chat-info">
-                    {chat.isGroupChat ? (
-                      <span>
-                        <b>{chat.chatName}</b>
-                      </span>
-                    ) : user._id === chat.users[0]._id ? (
-                      <span>
-                        <b>
-                          {chat.users[1].firstName} {chat.users[1].lastName}
-                        </b>
-                      </span>
-                    ) : (
-                      <span>
-                        <b>
-                          {chat.users[0].firstName} {chat.users[0].lastName}
-                        </b>
-                      </span>
-                    )}
-                    <p>{chat.lastMessage && chat.lastMessage.content}</p>
+                      }
+                      alt="Chat"
+                    />
+                    <div className="chat-info">
+                      {chat.isGroupChat ? (
+                        <span>
+                          <b>{chat.chatName}</b>
+                        </span>
+                      ) : user._id === chat.users[0]._id ? (
+                        <span>
+                          <b>
+                            {chat.users[1].firstName} {chat.users[1].lastName}
+                          </b>
+                        </span>
+                      ) : (
+                        <span>
+                          <b>
+                            {chat.users[0].firstName} {chat.users[0].lastName}
+                          </b>
+                        </span>
+                      )}
+                      <p>{chat.lastMessage && chat.lastMessage.content}</p>
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </ScrollableFeed>
+            <button className="new-chat-btn">+ New Chat</button>
           </div>
           <div className="current-chat">
             <div className="chat-window">
