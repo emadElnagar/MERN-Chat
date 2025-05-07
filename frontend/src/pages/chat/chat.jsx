@@ -117,6 +117,12 @@ const ChatPage = () => {
           </div>
           <div className="current-chat">
             <div className="chat-window">
+              <div className="modal">
+                <div className="modal-content">
+                  <button className="close">&times;</button>
+                  <p className="modal-header">Create a new chat</p>
+                </div>
+              </div>
               <ScrollableFeed>
                 {chat && messages && messages.length > 0
                   ? messages.map((message) => (
