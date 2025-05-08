@@ -9,9 +9,11 @@ import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
 import { getMessages, newMessage } from "../../features/MessageFeatures";
 import ScrollableFeed from "react-scrollable-feed";
+import { FaPlus, FaMinus } from "react-icons/fa6";
 
 const ChatPage = () => {
   const [message, setMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useSelector((state) => state.user);
   const { chats, isLoading, error } = useSelector((state) => state.chat);
   const { messages } = useSelector((state) => state.message);
@@ -113,14 +115,56 @@ const ChatPage = () => {
                 ))
               )}
             </ScrollableFeed>
-            <button className="new-chat-btn">+ New Chat</button>
+            <button
+              className="new-chat-btn"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <FaPlus /> New Chat
+            </button>
           </div>
           <div className="current-chat">
             <div className="chat-window">
-              <div className="modal">
+              <div className={`modal ${isModalOpen ? "" : "disappear"}`}>
                 <div className="modal-content">
-                  <button className="close">&times;</button>
-                  <p className="modal-header">Create a new chat</p>
+                  <button
+                    className="close"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    &times;
+                  </button>
+                  <h4 className="modal-header">Create a new chat</h4>
+                  <div className="modal-form">
+                    <form>
+                      <input type="text" placeholder="Enter chat name" />
+                      <button type="submit" className="search-btn">
+                        done
+                      </button>
+                    </form>
+                  </div>
+                  <div className="user-frineds">
+                    <ScrollableFeed>
+                      <div className="user-friend">
+                        <img src={UserAvatar} alt="User" />
+                        <div className="user-friend-info">
+                          <p className="user-friend-name">John Doe</p>
+                          <p className="user-friend-status">Online</p>
+                        </div>
+                        <button className="add-friend-btn">
+                          <FaPlus />
+                        </button>
+                      </div>
+                      <div className="user-friend">
+                        <img src={UserAvatar} alt="User" />
+                        <div className="user-friend-info">
+                          <p className="user-friend-name">Jane Doe</p>
+                          <p className="user-friend-status">Online</p>
+                        </div>
+                        <button className="add-friend-btn">
+                          <FaMinus />
+                        </button>
+                      </div>
+                    </ScrollableFeed>
+                  </div>
                 </div>
               </div>
               <ScrollableFeed>
