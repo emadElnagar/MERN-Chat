@@ -28,13 +28,13 @@ export const createChat = async (req, res) => {
 
   try {
     const existingChat = await Chat.findOne({
-      users: { $all: sortedUsers },
-      isGroupChat,
+      isGroupChat: false,
+      users: { $size: 2, $all: sortedUsers },
     });
     if (existingChat) {
       return res
         .status(400)
-        .json({ message: "Chat already exists with these users" });
+        .json({ message: "This chat already exists with these users" });
     }
     const newChat = new Chat({
       chatName,
