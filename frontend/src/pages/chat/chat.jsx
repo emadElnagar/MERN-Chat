@@ -3,23 +3,33 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useState } from "react";
-import { FetchChats, FetchSingleChat } from "../../features/ChatFeatures";
+import {
+  CreateChat,
+  FetchChats,
+  FetchSingleChat,
+} from "../../features/ChatFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import UserAvatar from "../../assets/user-avatar.png";
 import { getMessages, newMessage } from "../../features/MessageFeatures";
 import ScrollableFeed from "react-scrollable-feed";
 import { FaPlus, FaMinus } from "react-icons/fa6";
+import { GetFriends } from "../../features/UserFeatures";
+import { useAlert } from "react-alert";
 
 const ChatPage = () => {
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [chatUsers, setChatUsers] = useState([]);
+  const [chatName, setChatName] = useState("");
   const { user } = useSelector((state) => state.user);
+  const { friendsList } = useSelector((state) => state.user);
   const { chats, isLoading, error } = useSelector((state) => state.chat);
   const { messages } = useSelector((state) => state.message);
   let { chat } = useSelector((state) => state.chat);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const alert = useAlert();
   if (!user) {
     navigate("/users/login");
   }
@@ -54,6 +64,33 @@ const ChatPage = () => {
       dispatch(getMessages(chat._id));
     }
   }, [dispatch, chat]);
+  // Get friends
+  useEffect(() => {
+    dispatch(GetFriends());
+  }, [dispatch]);
+  // Create new chat
+  const createChat = (e) => {
+    e.preventDefault();
+    if (chatUsers.length === 0) {
+      alert.error("Please select at least one user");
+      return;
+    }
+    if (chatUsers.length > 1 && chatName.trim() === "") {
+      alert.error("Please enter a chat name");
+      return;
+    }
+    const chatData = {
+      users: chatUsers,
+      chatName,
+    };
+    dispatch(CreateChat(chatData))
+      .unwrap()
+      .then(() => {
+        setIsModalOpen(false);
+        setChatUsers([]);
+        setChatName("");
+      });
+  };
 
   return (
     <>
@@ -153,35 +190,64 @@ const ChatPage = () => {
                   </button>
                   <h4 className="modal-header">Create a new chat</h4>
                   <div className="modal-form">
-                    <form>
-                      <input type="text" placeholder="Enter chat name" />
+                    <form onSubmit={(e) => createChat(e)}>
+                      <input
+                        type="text"
+                        placeholder="Enter chat name"
+                        onChange={(e) => setChatName(e.target.value)}
+                      />
                       <button type="submit" className="search-btn">
-                        done
+                        Create
                       </button>
                     </form>
                   </div>
                   <div className="user-frineds">
                     <ScrollableFeed>
-                      <div className="user-friend">
-                        <img src={UserAvatar} alt="User" />
-                        <div className="user-friend-info">
-                          <p className="user-friend-name">John Doe</p>
-                          <p className="user-friend-status">Online</p>
-                        </div>
-                        <button className="add-friend-btn">
-                          <FaPlus />
-                        </button>
-                      </div>
-                      <div className="user-friend">
-                        <img src={UserAvatar} alt="User" />
-                        <div className="user-friend-info">
-                          <p className="user-friend-name">Jane Doe</p>
-                          <p className="user-friend-status">Online</p>
-                        </div>
-                        <button className="add-friend-btn">
-                          <FaMinus />
-                        </button>
-                      </div>
+                      {friendsList &&
+                        friendsList.friends &&
+                        friendsList.friends.length > 0 &&
+                        friendsList.friends.map((friend) => (
+                          <div className="user-friend" key={friend._id}>
+                            <img
+                              src={
+                                friend.image
+                                  ? "http://localhost:5000/" + friend.image
+                                  : UserAvatar
+                              }
+                              alt="User"
+                            />
+                            <div className="user-friend-info">
+                              <p className="user-friend-name">
+                                {friend.firstName} {friend.lastName}
+                              </p>
+                            </div>
+                            {chatUsers &&
+                            chatUsers.length > 0 &&
+                            chatUsers.includes(friend._id) ? (
+                              <button
+                                className="remove-friend-btn"
+                                onClick={() => {
+                                  setChatUsers(
+                                    chatUsers.filter(
+                                      (user) => user !== friend._id
+                                    )
+                                  );
+                                }}
+                              >
+                                <FaMinus />
+                              </button>
+                            ) : (
+                              <button
+                                className="add-friend-btn"
+                                onClick={() => {
+                                  setChatUsers([...chatUsers, friend._id]);
+                                }}
+                              >
+                                <FaPlus />
+                              </button>
+                            )}
+                          </div>
+                        ))}
                     </ScrollableFeed>
                   </div>
                 </div>
