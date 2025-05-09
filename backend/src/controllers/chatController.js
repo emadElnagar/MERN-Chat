@@ -57,7 +57,13 @@ export const getChats = async (req, res) => {
     })
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
-      .populate("lastMessage")
+      .populate({
+        path: "lastMessage",
+        populate: {
+          path: "sender",
+          select: "_id firstName lastName image email",
+        },
+      })
       .sort({ updatedAt: -1 });
     res.status(200).json(chats);
   } catch (error) {

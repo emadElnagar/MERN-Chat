@@ -93,23 +93,42 @@ const ChatPage = () => {
                     />
                     <div className="chat-info">
                       {chat.isGroupChat ? (
-                        <span>
+                        <span className="chat-name">
                           <b>{chat.chatName}</b>
                         </span>
                       ) : user._id === chat.users[0]._id ? (
-                        <span>
+                        <span className="chat-name">
                           <b>
                             {chat.users[1].firstName} {chat.users[1].lastName}
                           </b>
                         </span>
                       ) : (
-                        <span>
+                        <span className="chat-name">
                           <b>
                             {chat.users[0].firstName} {chat.users[0].lastName}
                           </b>
                         </span>
                       )}
-                      <p>{chat.lastMessage && chat.lastMessage.content}</p>
+                      {chat.lastMessage &&
+                        (chat.lastMessage.sender._id === user._id ? (
+                          <>
+                            <span>You: </span>
+                            <span>
+                              {chat.lastMessage.content.length > 20
+                                ? chat.lastMessage.content.slice(0, 20) + "..."
+                                : chat.lastMessage.content}
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span>{chat.lastMessage.sender.firstName}: </span>
+                            <span>
+                              {chat.lastMessage.content.length > 20
+                                ? chat.lastMessage.content.slice(0, 20) + "..."
+                                : chat.lastMessage.content}
+                            </span>
+                          </>
+                        ))}
                     </div>
                   </div>
                 ))

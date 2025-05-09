@@ -272,6 +272,10 @@ a {
         border-radius: 50%;
         margin-inline-end: 5px;
       }
+      .chat-name {
+        text-align: start;
+        display: block;
+      }
     }
     .new-chat-btn {
       color: var(--primary);
