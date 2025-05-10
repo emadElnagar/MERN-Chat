@@ -79,6 +79,7 @@ const ChatPage = () => {
       alert.error("Please enter a chat name");
       return;
     }
+    chatUsers.push(user._id);
     const chatData = {
       users: chatUsers,
       chatName,
@@ -178,123 +179,128 @@ const ChatPage = () => {
               <FaPlus /> New Chat
             </button>
           </div>
-          <div className="current-chat">
-            <div className="chat-window">
-              <div className={`modal ${isModalOpen ? "" : "disappear"}`}>
-                <div className="modal-content">
-                  <button
-                    className="close"
-                    onClick={() => setIsModalOpen(false)}
-                  >
-                    &times;
+          <div className={`modal ${isModalOpen ? "" : "disappear"}`}>
+            <div className="modal-content">
+              <button className="close" onClick={() => setIsModalOpen(false)}>
+                &times;
+              </button>
+              <h4 className="modal-header">Create a new chat</h4>
+              <div className="modal-form">
+                <form onSubmit={(e) => createChat(e)}>
+                  <input
+                    type="text"
+                    placeholder="Enter chat name"
+                    value={chatName}
+                    disabled={chatUsers.length <= 1}
+                    onChange={(e) => setChatName(e.target.value)}
+                  />
+                  <button type="submit" className="search-btn">
+                    Create
                   </button>
-                  <h4 className="modal-header">Create a new chat</h4>
-                  <div className="modal-form">
-                    <form onSubmit={(e) => createChat(e)}>
-                      <input
-                        type="text"
-                        placeholder="Enter chat name"
-                        onChange={(e) => setChatName(e.target.value)}
-                      />
-                      <button type="submit" className="search-btn">
-                        Create
-                      </button>
-                    </form>
-                  </div>
-                  <div className="user-frineds">
-                    <ScrollableFeed>
-                      {friendsList &&
-                        friendsList.friends &&
-                        friendsList.friends.length > 0 &&
-                        friendsList.friends.map((friend) => (
-                          <div className="user-friend" key={friend._id}>
-                            <img
-                              src={
-                                friend.image
-                                  ? "http://localhost:5000/" + friend.image
-                                  : UserAvatar
-                              }
-                              alt="User"
-                            />
-                            <div className="user-friend-info">
-                              <p className="user-friend-name">
-                                {friend.firstName} {friend.lastName}
-                              </p>
-                            </div>
-                            {chatUsers &&
-                            chatUsers.length > 0 &&
-                            chatUsers.includes(friend._id) ? (
-                              <button
-                                className="remove-friend-btn"
-                                onClick={() => {
-                                  setChatUsers(
-                                    chatUsers.filter(
-                                      (user) => user !== friend._id
-                                    )
-                                  );
-                                }}
-                              >
-                                <FaMinus />
-                              </button>
-                            ) : (
-                              <button
-                                className="add-friend-btn"
-                                onClick={() => {
-                                  setChatUsers([...chatUsers, friend._id]);
-                                }}
-                              >
-                                <FaPlus />
-                              </button>
-                            )}
-                          </div>
-                        ))}
-                    </ScrollableFeed>
-                  </div>
-                </div>
+                </form>
               </div>
-              <ScrollableFeed>
-                {chat && messages && messages.length > 0
-                  ? messages.map((message) => (
-                      <div
-                        className={
-                          message.sender._id === user._id
-                            ? "message message-sent"
-                            : "message message-received"
-                        }
-                        key={message._id}
-                      >
-                        {message.sender._id !== user._id && (
-                          <img
-                            src={
-                              message.sender.image
-                                ? "http://localhost:5000/" +
-                                  message.sender.image
-                                : UserAvatar
-                            }
-                            alt="User"
-                          />
+              <div className="user-frineds">
+                <ScrollableFeed>
+                  {friendsList &&
+                    friendsList.friends &&
+                    friendsList.friends.length > 0 &&
+                    friendsList.friends.map((friend) => (
+                      <div className="user-friend" key={friend._id}>
+                        <img
+                          src={
+                            friend.image
+                              ? "http://localhost:5000/" + friend.image
+                              : UserAvatar
+                          }
+                          alt="User"
+                        />
+                        <div className="user-friend-info">
+                          <p className="user-friend-name">
+                            {friend.firstName} {friend.lastName}
+                          </p>
+                        </div>
+                        {chatUsers &&
+                        chatUsers.length > 0 &&
+                        chatUsers.includes(friend._id) ? (
+                          <button
+                            className="remove-friend-btn"
+                            onClick={() => {
+                              setChatUsers(
+                                chatUsers.filter((user) => user !== friend._id)
+                              );
+                            }}
+                          >
+                            <FaMinus />
+                          </button>
+                        ) : (
+                          <button
+                            className="add-friend-btn"
+                            onClick={() => {
+                              setChatUsers([...chatUsers, friend._id]);
+                            }}
+                          >
+                            <FaPlus />
+                          </button>
                         )}
-                        <p className="message-content">{message.content}</p>
                       </div>
-                    ))
-                  : null}
-              </ScrollableFeed>
+                    ))}
+                </ScrollableFeed>
+              </div>
             </div>
-            <div className="chat-form">
-              <form type="POST" onSubmit={(e) => handleSubmit(e)}>
-                <input
-                  type="text"
-                  placeholder="Type a message..."
-                  onChange={(e) => {
-                    setMessage(e.target.value);
-                  }}
-                  value={message}
-                />
-                <button type="submit">
-                  <IoSend />
-                </button>
-              </form>
-            </div>
+          </div>
+          <div className="current-chat">
+            {chat ? (
+              <>
+                <div className="chat-window">
+                  <ScrollableFeed>
+                    {chat && messages && messages.length > 0
+                      ? messages.map((message) => (
+                          <div
+                            className={
+                              message.sender._id === user._id
+                                ? "message message-sent"
+                                : "message message-received"
+                            }
+                            key={message._id}
+                          >
+                            {message.sender._id !== user._id && (
+                              <img
+                                src={
+                                  message.sender.image
+                                    ? "http://localhost:5000/" +
+                                      message.sender.image
+                                    : UserAvatar
+                                }
+                                alt="User"
+                              />
+                            )}
+                            <p className="message-content">{message.content}</p>
+                          </div>
+                        ))
+                      : null}
+                  </ScrollableFeed>
+                </div>
+                <div className="chat-form">
+                  <form type="POST" onSubmit={(e) => handleSubmit(e)}>
+                    <input
+                      type="text"
+                      placeholder="Type a message..."
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                      }}
+                      value={message}
+                    />
+                    <button type="submit">
+                      <IoSend />
+                    </button>
+                  </form>
+                </div>
+              </>
+            ) : (
+              <div className="no-chat">
+                <h4>Select a chat to start messaging</h4>
+              </div>
+            )}
           </div>
         </div>
       </div>

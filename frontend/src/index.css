@@ -41,6 +41,10 @@ input {
   background: var(--info);
 }
 
+input:disabled {
+  cursor: not-allowed;
+}
+
 body {
   background: var(--background);
   color: var(--primary);
@@ -344,6 +348,17 @@ a {
       }
     }
   }
+}
+
+.no-chat {
+  width: 100%;
+  height: calc(100vh - 90px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--primary);
 }
 
 .disappear {
