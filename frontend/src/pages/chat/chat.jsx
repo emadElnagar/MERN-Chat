@@ -16,6 +16,10 @@ import ScrollableFeed from "react-scrollable-feed";
 import { FaPlus, FaMinus } from "react-icons/fa6";
 import { GetFriends } from "../../features/UserFeatures";
 import { useAlert } from "react-alert";
+import { io } from "socket.io-client";
+
+const ENDPOINT = "http://localhost:5000";
+let socket, selectedChatCompare;
 
 const ChatPage = () => {
   const [message, setMessage] = useState("");
@@ -92,6 +96,13 @@ const ChatPage = () => {
         setChatName("");
       });
   };
+  // Socket.io
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.on("connected", () => {
+      console.log("Connected to socket.io");
+    });
+  }, []);
 
   return (
     <>
