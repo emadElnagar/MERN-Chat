@@ -26,6 +26,7 @@ const ChatPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chatUsers, setChatUsers] = useState([]);
   const [chatName, setChatName] = useState("");
+  const [socketConnected, setSocketConnected] = useState(false);
   const { user } = useSelector((state) => state.user);
   const { friendsList } = useSelector((state) => state.user);
   const { chats, isLoading, error } = useSelector((state) => state.chat);
@@ -37,6 +38,14 @@ const ChatPage = () => {
   if (!user) {
     navigate("/users/login");
   }
+  // Socket.io
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connected", () => {
+      setSocketConnected(true);
+    });
+  }, []);
   // Fetch all chats
   useEffect(() => {
     dispatch(FetchChats(user._id));
@@ -64,9 +73,10 @@ const ChatPage = () => {
   };
   // Fetch messages
   useEffect(() => {
-    if (chat) {
-      dispatch(getMessages(chat._id));
-    }
+    if (!chat) return;
+    dispatch(getMessages(chat._id));
+    socket.emit("join chat", chat._id);
+    selectedChatCompare = chat;
   }, [dispatch, chat]);
   // Get friends
   useEffect(() => {
@@ -96,13 +106,6 @@ const ChatPage = () => {
         setChatName("");
       });
   };
-  // Socket.io
-  useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.on("connected", () => {
-      console.log("Connected to socket.io");
-    });
-  }, []);
 
   return (
     <>
@@ -160,23 +163,23 @@ const ChatPage = () => {
                       )}
                       {chat.lastMessage &&
                         (chat.lastMessage.sender._id === user._id ? (
-                          <>
+                          <div className="last-message">
                             <span>You: </span>
                             <span>
                               {chat.lastMessage.content.length > 20
                                 ? chat.lastMessage.content.slice(0, 20) + "..."
                                 : chat.lastMessage.content}
                             </span>
-                          </>
+                          </div>
                         ) : (
-                          <>
+                          <div className="last-message">
                             <span>{chat.lastMessage.sender.firstName}: </span>
                             <span>
                               {chat.lastMessage.content.length > 20
                                 ? chat.lastMessage.content.slice(0, 20) + "..."
                                 : chat.lastMessage.content}
                             </span>
-                          </>
+                          </div>
                         ))}
                     </div>
                   </div>

@@ -33,5 +33,13 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("Connected to socket.io");
+  // Setup event
+  socket.on("setup", (userData) => {
+    socket.join(userData._id);
+    socket.emit("connected");
+  });
+  // join chat
+  socket.on("join chat", (room) => {
+    socket.join(room);
+  });
 });
