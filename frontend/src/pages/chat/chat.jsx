@@ -59,17 +59,22 @@ const ChatPage = () => {
     chat = chats[0];
   }
   // Send message
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (message.trim() === "") {
-      return;
-    }
+    if (message.trim() === "") return;
+
     const messageData = {
       chat: chat._id,
       content: message,
     };
-    dispatch(newMessage(messageData));
-    setMessage("");
+
+    try {
+      const res = await dispatch(newMessage(messageData)).unwrap(); // dispatch and wait for response
+      setMessage("");
+      socket.emit("new message", res); // emit to socket
+    } catch (err) {
+      console.error("Failed to send message:", err);
+    }
   };
   // Fetch messages
   useEffect(() => {
@@ -106,6 +111,24 @@ const ChatPage = () => {
         setChatName("");
       });
   };
+  // message received
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("message received", (newMessage) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessage.chat._id
+      ) {
+        return;
+      }
+      dispatch(getMessages(chat._id));
+    });
+
+    return () => {
+      socket.off("message received");
+    };
+  }, [dispatch, chat]);
 
   return (
     <>
