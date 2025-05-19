@@ -19,7 +19,7 @@ import { useAlert } from "react-alert";
 import { io } from "socket.io-client";
 
 const ENDPOINT = "http://localhost:5000";
-let socket, selectedChatCompare;
+let socket, selectedChatCompare, selectedChat;
 
 const ChatPage = () => {
   const [message, setMessage] = useState("");
@@ -27,6 +27,8 @@ const ChatPage = () => {
   const [chatUsers, setChatUsers] = useState([]);
   const [chatName, setChatName] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const { user } = useSelector((state) => state.user);
   const { friendsList } = useSelector((state) => state.user);
   const { chats, isLoading, error } = useSelector((state) => state.chat);
@@ -45,7 +47,13 @@ const ChatPage = () => {
     socket.on("connected", () => {
       setSocketConnected(true);
     });
-  }, []);
+    socket.on("typing", () => {
+      setIsTyping(true);
+    });
+    socket.on("stop typing", () => {
+      setIsTyping(false);
+    });
+  }, [user]);
   // Fetch all chats
   useEffect(() => {
     dispatch(FetchChats(user._id));
@@ -69,19 +77,20 @@ const ChatPage = () => {
     };
 
     try {
-      const res = await dispatch(newMessage(messageData)).unwrap(); // dispatch and wait for response
+      const res = await dispatch(newMessage(messageData)).unwrap();
       setMessage("");
-      socket.emit("new message", res); // emit to socket
+      socket.emit("new message", res);
     } catch (err) {
       console.error("Failed to send message:", err);
     }
   };
   // Fetch messages
   useEffect(() => {
-    if (!chat) return;
+    if (!chat || !socket) return;
+
     dispatch(getMessages(chat._id));
-    socket.emit("join chat", chat._id);
-    selectedChatCompare = chat;
+    socket.emit("join chat", selectedChat._id);
+    selectedChatCompare = selectedChat;
   }, [dispatch, chat]);
   // Get friends
   useEffect(() => {
@@ -129,6 +138,25 @@ const ChatPage = () => {
       socket.off("message received");
     };
   }, [dispatch, chat]);
+  // Typing
+  const typingHandler = (e) => {
+    setMessage(e.target.value);
+    if (!socketConnected) return;
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", chat._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    let timerLength = 3000;
+    setTimeout(() => {
+      let timeNow = new Date().getTime();
+      let timeDiff = timeNow - lastTypingTime + 2000;
+      if (timeDiff >= timerLength && typing) {
+        socket.emit("stop typing", chat._id);
+        setTyping(false);
+      }
+    }, timerLength);
+  };
 
   return (
     <>
@@ -315,6 +343,11 @@ const ChatPage = () => {
                           </div>
                         ))
                       : null}
+                    {isTyping && (
+                      <div className="typing-indicator">
+                        <em>Typing...</em>
+                      </div>
+                    )}
                   </ScrollableFeed>
                 </div>
                 <div className="chat-form">
@@ -322,9 +355,7 @@ const ChatPage = () => {
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      onChange={(e) => {
-                        setMessage(e.target.value);
-                      }}
+                      onChange={(e) => typingHandler(e)}
                       value={message}
                     />
                     <button type="submit">
