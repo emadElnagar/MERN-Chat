@@ -19,7 +19,7 @@ import { useAlert } from "react-alert";
 import { io } from "socket.io-client";
 
 const ENDPOINT = "http://localhost:5000";
-let socket, selectedChatCompare, selectedChat;
+let socket, selectedChatCompare;
 
 const ChatPage = () => {
   const [message, setMessage] = useState("");
@@ -89,8 +89,8 @@ const ChatPage = () => {
     if (!chat || !socket) return;
 
     dispatch(getMessages(chat._id));
-    socket.emit("join chat", selectedChat._id);
-    selectedChatCompare = selectedChat;
+    socket.emit("join chat", chat._id);
+    selectedChatCompare = chat;
   }, [dispatch, chat]);
   // Get friends
   useEffect(() => {
