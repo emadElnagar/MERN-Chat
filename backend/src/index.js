@@ -59,4 +59,8 @@ io.on("connection", (socket) => {
       socket.in(user._id).emit("message received", newMessageReceived);
     });
   });
+  // Disconnect
+  socket.off("setup", () => {
+    socket.leave(userData._id);
+  });
 });
