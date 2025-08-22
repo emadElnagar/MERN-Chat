@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
-const url = "http://localhost:5000/api/users";
+const url = import.meta.env.VITE_AUTH_URL;
 
 const initialState = {
   users: [],

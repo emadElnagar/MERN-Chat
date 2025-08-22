@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const url = "http://localhost:5000/api/messages";
+const url = import.meta.env.VITE_MESSAGES_URL;
 
 const initialState = {
   messages: [],
