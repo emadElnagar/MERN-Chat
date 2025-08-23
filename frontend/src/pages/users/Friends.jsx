@@ -107,7 +107,7 @@ const FriendsPage = () => {
                           <img
                             src={`${
                               friend.image
-                                ? "http://localhost:5000/" + friend.image
+                                ? `${import.meta.env.VITE_URL}/` + friend.image
                                 : UserAvatar
                             }`}
                             alt="problem showing image"
@@ -153,7 +153,7 @@ const FriendsPage = () => {
                           <img
                             src={`${
                               friend.image
-                                ? "http://localhost:5000/" + friend.image
+                                ? `${import.meta.env.VITE_URL}/` + friend.image
                                 : UserAvatar
                             }`}
                             alt="problem showing image"
@@ -197,7 +197,7 @@ const FriendsPage = () => {
                           <img
                             src={`${
                               friend.image
-                                ? "http://localhost:5000/" + friend.image
+                                ? `${import.meta.env.VITE_URL}/` + friend.image
                                 : UserAvatar
                             }`}
                             alt="problem showing image"

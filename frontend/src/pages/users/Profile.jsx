@@ -51,7 +51,7 @@ const Profile = () => {
                     image
                       ? URL.createObjectURL(image)
                       : profile.image
-                      ? "http://localhost:5000/" + profile.image
+                      ? `${import.meta.env.VITE_URL}/` + profile.image
                       : UserAvatar
                   }`}
                   alt="user avatar"

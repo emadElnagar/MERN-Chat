@@ -18,7 +18,7 @@ import { GetFriends } from "../../features/UserFeatures";
 import { useAlert } from "react-alert";
 import { io } from "socket.io-client";
 
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = `${import.meta.env.VITE_URL}`;
 let socket, selectedChatCompare;
 
 const ChatPage = () => {
@@ -182,14 +182,16 @@ const ChatPage = () => {
                       src={
                         chat.isGroupChat
                           ? chat.groupAdmin.image
-                            ? "http://localhost:5000/" + chat.groupAdmin.image
+                            ? `${import.meta.env.VITE_URL}/` +
+                              chat.groupAdmin.image
                             : UserAvatar
                           : user._id === chat.users[0]._id
                           ? chat.users[1].image
-                            ? "http://localhost:5000/" + chat.users[1].image
+                            ? `${import.meta.env.VITE_URL}/` +
+                              chat.users[1].image
                             : UserAvatar
                           : chat.users[0].image
-                          ? "http://localhost:5000/" + chat.users[0].image
+                          ? `${import.meta.env.VITE_URL}/` + chat.users[0].image
                           : UserAvatar
                       }
                       alt="Chat"
@@ -274,7 +276,7 @@ const ChatPage = () => {
                         <img
                           src={
                             friend.image
-                              ? "http://localhost:5000/" + friend.image
+                              ? `${import.meta.env.VITE_URL}/` + friend.image
                               : UserAvatar
                           }
                           alt="User"
@@ -332,7 +334,7 @@ const ChatPage = () => {
                               <img
                                 src={
                                   message.sender.image
-                                    ? "http://localhost:5000/" +
+                                    ? `${import.meta.env.VITE_URL}/` +
                                       message.sender.image
                                     : UserAvatar
                                 }

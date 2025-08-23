@@ -96,7 +96,8 @@ const SearchPage = () => {
                       <img
                         src={`${
                           searchedUser.image
-                            ? "http://localhost:5000/" + searchedUser.image
+                            ? `${import.meta.env.VITE_URL}/` +
+                              searchedUser.image
                             : UserAvatar
                         }`}
                         alt="problem showing image"
