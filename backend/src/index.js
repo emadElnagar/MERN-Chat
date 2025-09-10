@@ -33,34 +33,50 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  // Setup event
+  // Setup event: user joins their own room (for direct messaging)
   socket.on("setup", (userData) => {
+    if (!userData || !userData._id) {
+      return socket.emit("error", "Invalid user data");
+    }
+    socket.userId = userData._id;
     socket.join(userData._id);
     socket.emit("connected");
   });
-  // join chat
+
+  // Join chat room
   socket.on("join chat", (room) => {
     socket.join(room);
   });
-  // Typing
+
+  // Typing indicator
   socket.on("typing", (room) => {
-    socket.in(room).emit("typing");
+    socket.to(room).emit("typing");
   });
-  // Stop Typing
+
   socket.on("stop typing", (room) => {
-    socket.in(room).emit("stop typing");
+    socket.to(room).emit("stop typing");
   });
+
   // New message
   socket.on("new message", (newMessageReceived) => {
-    let chat = newMessageReceived.chat;
-    if (!chat.users) return console.log("chat.users not defined");
-    chat.users.forEach((user) => {
-      if (user._id == newMessageReceived.sender._id) return;
-      socket.in(user._id).emit("message received", newMessageReceived);
-    });
+    const chat = newMessageReceived.chat;
+    if (!chat || !chat.users) {
+      return;
+    }
+
+    chat.users
+      .filter(
+        (u) => u._id.toString() !== newMessageReceived.sender._id.toString()
+      )
+      .forEach((u) => {
+        socket.to(u._id).emit("message received", newMessageReceived);
+      });
   });
-  // Disconnect
-  socket.off("setup", () => {
-    socket.leave(userData._id);
+
+  // Disconnect event
+  socket.on("disconnect", () => {
+    if (socket.userId) {
+      socket.leave(socket.userId);
+    }
   });
 });

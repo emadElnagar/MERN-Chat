@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { IoSend } from "react-icons/io5";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   CreateChat,
   FetchChats,
@@ -19,7 +19,6 @@ import { useAlert } from "react-alert";
 import { io } from "socket.io-client";
 
 const ENDPOINT = `${import.meta.env.VITE_URL}`;
-let socket, selectedChatCompare;
 
 const ChatPage = () => {
   const [message, setMessage] = useState("");
@@ -29,47 +28,63 @@ const ChatPage = () => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+
+  const socketRef = useRef(null);
+  const selectedChatRef = useRef(null);
+
   const { user } = useSelector((state) => state.user);
   const { friendsList } = useSelector((state) => state.user);
-  const { chats, isLoading, error } = useSelector((state) => state.chat);
+  const { chats, isLoading, error, chat } = useSelector((state) => state.chat);
   const { messages } = useSelector((state) => state.message);
-  let { chat } = useSelector((state) => state.chat);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const alert = useAlert();
-  if (!user) {
-    navigate("/users/login");
-  }
-  // Socket.io
+
+  // Redirect if not logged in
   useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit("setup", user);
-    socket.on("connected", () => {
-      setSocketConnected(true);
+    if (!user) navigate("/users/login");
+  }, [user, navigate]);
+
+  // Socket.io setup
+  useEffect(() => {
+    if (!user) return;
+
+    const newSocket = io(ENDPOINT);
+
+    newSocket.emit("setup", user);
+
+    newSocket.on("connected", () => setSocketConnected(true));
+    newSocket.on("typing", () => setIsTyping(true));
+    newSocket.on("stop typing", () => setIsTyping(false));
+    newSocket.on("error", (err) => {
+      console.error("Socket error:", err);
+      alert.error("Socket connection failed. Please try again later.");
     });
-    socket.on("typing", () => {
-      setIsTyping(true);
-    });
-    socket.on("stop typing", () => {
-      setIsTyping(false);
-    });
-  }, [user]);
+
+    socketRef.current = newSocket;
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [user, alert]);
+
   // Fetch all chats
   useEffect(() => {
-    dispatch(FetchChats(user._id));
-  }, [dispatch, user._id]);
-  // Fetch Single chat
+    if (user?._id) {
+      dispatch(FetchChats(user._id));
+    }
+  }, [dispatch, user?._id]);
+
+  // Fetch single chat
   const getChat = (id) => {
     dispatch(FetchSingleChat(id));
   };
-  // Default chat
-  if (chats && !chat) {
-    chat = chats[0];
-  }
+
   // Send message
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (message.trim() === "") return;
+    if (message.trim() === "" || !chat) return;
 
     const messageData = {
       chat: chat._id,
@@ -79,23 +94,27 @@ const ChatPage = () => {
     try {
       const res = await dispatch(newMessage(messageData)).unwrap();
       setMessage("");
-      socket.emit("new message", res);
+      socketRef.current?.emit("new message", res);
     } catch (err) {
       console.error("Failed to send message:", err);
+      alert.error("Failed to send message");
     }
   };
-  // Fetch messages
+
+  // Fetch messages when chat changes
   useEffect(() => {
-    if (!chat || !socket) return;
+    if (!chat || !socketRef.current) return;
 
     dispatch(getMessages(chat._id));
-    socket.emit("join chat", chat._id);
-    selectedChatCompare = chat;
+    socketRef.current.emit("join chat", chat._id);
+    selectedChatRef.current = chat;
   }, [dispatch, chat]);
-  // Get friends
+
+  // Get friends list
   useEffect(() => {
     dispatch(GetFriends());
   }, [dispatch]);
+
   // Create new chat
   const createChat = (e) => {
     e.preventDefault();
@@ -107,11 +126,12 @@ const ChatPage = () => {
       alert.error("Please enter a chat name");
       return;
     }
-    chatUsers.push(user._id);
+
     const chatData = {
-      users: chatUsers,
+      users: [...chatUsers, user._id],
       chatName,
     };
+
     dispatch(CreateChat(chatData))
       .unwrap()
       .then(() => {
@@ -120,15 +140,18 @@ const ChatPage = () => {
         setChatName("");
       });
   };
-  // message received
-  useEffect(() => {
-    if (!socket) return;
 
+  // Listen for new messages
+  useEffect(() => {
+    if (!socketRef.current) return;
+
+    const socket = socketRef.current;
     socket.on("message received", (newMessage) => {
       if (
-        !selectedChatCompare ||
-        selectedChatCompare._id !== newMessage.chat._id
+        !selectedChatRef.current ||
+        selectedChatRef.current._id !== newMessage.chat._id
       ) {
+        // could show notification for other chats here
         return;
       }
       dispatch(getMessages(chat._id));
@@ -138,21 +161,24 @@ const ChatPage = () => {
       socket.off("message received");
     };
   }, [dispatch, chat]);
-  // Typing
+
+  // Typing handler
   const typingHandler = (e) => {
     setMessage(e.target.value);
-    if (!socketConnected) return;
+    if (!socketConnected || !chat) return;
+
     if (!typing) {
       setTyping(true);
-      socket.emit("typing", chat._id);
+      socketRef.current?.emit("typing", chat._id);
     }
-    let lastTypingTime = new Date().getTime();
-    let timerLength = 3000;
+
+    const lastTypingTime = Date.now();
+    const timerLength = 3000;
+
     setTimeout(() => {
-      let timeNow = new Date().getTime();
-      let timeDiff = timeNow - lastTypingTime + 2000;
-      if (timeDiff >= timerLength && typing) {
-        socket.emit("stop typing", chat._id);
+      const timeNow = Date.now();
+      if (timeNow - lastTypingTime >= timerLength && typing) {
+        socketRef.current?.emit("stop typing", chat._id);
         setTyping(false);
       }
     }, timerLength);
@@ -165,14 +191,15 @@ const ChatPage = () => {
       </Helmet>
       <div className="container-fluid">
         <div className="chat-container">
+          {/* Chat list */}
           <div className="chat-list">
             <ScrollableFeed>
-              {isLoading === true ? (
+              {isLoading ? (
                 <LoadingScreen />
               ) : error ? (
                 <ErrorBox message={error.message} />
               ) : (
-                chats.map((chat) => (
+                chats?.map((chat) => (
                   <div
                     className="chat"
                     key={chat._id}
@@ -181,16 +208,16 @@ const ChatPage = () => {
                     <img
                       src={
                         chat.isGroupChat
-                          ? chat.groupAdmin.image
+                          ? chat.groupAdmin?.image
                             ? `${import.meta.env.VITE_URL}/` +
                               chat.groupAdmin.image
                             : UserAvatar
                           : user._id === chat.users[0]._id
-                          ? chat.users[1].image
+                          ? chat.users[1]?.image
                             ? `${import.meta.env.VITE_URL}/` +
                               chat.users[1].image
                             : UserAvatar
-                          : chat.users[0].image
+                          : chat.users[0]?.image
                           ? `${import.meta.env.VITE_URL}/` + chat.users[0].image
                           : UserAvatar
                       }
@@ -246,6 +273,8 @@ const ChatPage = () => {
               <FaPlus /> New Chat
             </button>
           </div>
+
+          {/* Create chat modal */}
           <div className={`modal ${isModalOpen ? "" : "disappear"}`}>
             <div className="modal-content">
               <button className="close" onClick={() => setIsModalOpen(false)}>
@@ -253,7 +282,7 @@ const ChatPage = () => {
               </button>
               <h4 className="modal-header">Create a new chat</h4>
               <div className="modal-form">
-                <form onSubmit={(e) => createChat(e)}>
+                <form onSubmit={createChat}>
                   <input
                     type="text"
                     placeholder="Enter chat name"
@@ -266,85 +295,80 @@ const ChatPage = () => {
                   </button>
                 </form>
               </div>
-              <div className="user-frineds">
+              <div className="user-friends">
                 <ScrollableFeed>
-                  {friendsList &&
-                    friendsList.friends &&
-                    friendsList.friends.length > 0 &&
-                    friendsList.friends.map((friend) => (
-                      <div className="user-friend" key={friend._id}>
-                        <img
-                          src={
-                            friend.image
-                              ? `${import.meta.env.VITE_URL}/` + friend.image
-                              : UserAvatar
-                          }
-                          alt="User"
-                        />
-                        <div className="user-friend-info">
-                          <p className="user-friend-name">
-                            {friend.firstName} {friend.lastName}
-                          </p>
-                        </div>
-                        {chatUsers &&
-                        chatUsers.length > 0 &&
-                        chatUsers.includes(friend._id) ? (
-                          <button
-                            className="remove-friend-btn"
-                            onClick={() => {
-                              setChatUsers(
-                                chatUsers.filter((user) => user !== friend._id)
-                              );
-                            }}
-                          >
-                            <FaMinus />
-                          </button>
-                        ) : (
-                          <button
-                            className="add-friend-btn"
-                            onClick={() => {
-                              setChatUsers([...chatUsers, friend._id]);
-                            }}
-                          >
-                            <FaPlus />
-                          </button>
-                        )}
+                  {friendsList?.friends?.map((friend) => (
+                    <div className="user-friend" key={friend._id}>
+                      <img
+                        src={
+                          friend.image
+                            ? `${import.meta.env.VITE_URL}/` + friend.image
+                            : UserAvatar
+                        }
+                        alt="User"
+                      />
+                      <div className="user-friend-info">
+                        <p className="user-friend-name">
+                          {friend.firstName} {friend.lastName}
+                        </p>
                       </div>
-                    ))}
+                      {chatUsers.includes(friend._id) ? (
+                        <button
+                          className="remove-friend-btn"
+                          onClick={() =>
+                            setChatUsers(
+                              chatUsers.filter((id) => id !== friend._id)
+                            )
+                          }
+                        >
+                          <FaMinus />
+                        </button>
+                      ) : (
+                        <button
+                          className="add-friend-btn"
+                          onClick={() =>
+                            setChatUsers([...chatUsers, friend._id])
+                          }
+                        >
+                          <FaPlus />
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </ScrollableFeed>
               </div>
             </div>
           </div>
+
+          {/* Current chat */}
           <div className="current-chat">
             {chat ? (
               <>
                 <div className="chat-window">
                   <ScrollableFeed>
-                    {chat && messages && messages.length > 0
-                      ? messages.map((message) => (
-                          <div
-                            className={
-                              message.sender._id === user._id
-                                ? "message message-sent"
-                                : "message message-received"
+                    {messages?.map((m) => (
+                      <div
+                        className={
+                          m.sender._id === user._id
+                            ? "message message-sent"
+                            : "message message-received"
+                        }
+                        key={m._id}
+                      >
+                        {m.sender._id !== user._id && (
+                          <img
+                            src={
+                              m.sender.image
+                                ? `${import.meta.env.VITE_URL}/` +
+                                  m.sender.image
+                                : UserAvatar
                             }
-                            key={message._id}
-                          >
-                            {message.sender._id !== user._id && (
-                              <img
-                                src={
-                                  message.sender.image
-                                    ? `${import.meta.env.VITE_URL}/` +
-                                      message.sender.image
-                                    : UserAvatar
-                                }
-                                alt="User"
-                              />
-                            )}
-                            <p className="message-content">{message.content}</p>
-                          </div>
-                        ))
-                      : null}
+                            alt="User"
+                          />
+                        )}
+                        <p className="message-content">{m.content}</p>
+                      </div>
+                    ))}
                     {isTyping && (
                       <div className="typing-indicator">
                         <em>Typing...</em>
@@ -353,11 +377,11 @@ const ChatPage = () => {
                   </ScrollableFeed>
                 </div>
                 <div className="chat-form">
-                  <form type="POST" onSubmit={(e) => handleSubmit(e)}>
+                  <form onSubmit={handleSubmit}>
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      onChange={(e) => typingHandler(e)}
+                      onChange={typingHandler}
                       value={message}
                     />
                     <button type="submit">
