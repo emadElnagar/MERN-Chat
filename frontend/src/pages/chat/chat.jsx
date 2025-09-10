@@ -146,21 +146,24 @@ const ChatPage = () => {
     if (!socketRef.current) return;
 
     const socket = socketRef.current;
-    socket.on("message received", (newMessage) => {
-      if (
-        !selectedChatRef.current ||
-        selectedChatRef.current._id !== newMessage.chat._id
-      ) {
-        // could show notification for other chats here
-        return;
+
+    socket.on("typing", (typingUser) => {
+      if (typingUser._id !== user._id) {
+        setIsTyping(`${typingUser.firstName} is typing...`);
       }
-      dispatch(getMessages(chat._id));
+    });
+
+    socket.on("stop typing", (typingUser) => {
+      if (typingUser._id !== user._id) {
+        setIsTyping(false);
+      }
     });
 
     return () => {
-      socket.off("message received");
+      socket.off("typing");
+      socket.off("stop typing");
     };
-  }, [dispatch, chat]);
+  }, [user]);
 
   // Typing handler
   const typingHandler = (e) => {
@@ -169,7 +172,7 @@ const ChatPage = () => {
 
     if (!typing) {
       setTyping(true);
-      socketRef.current?.emit("typing", chat._id);
+      socketRef.current?.emit("typing", { room: chat._id, user });
     }
 
     const lastTypingTime = Date.now();
@@ -178,7 +181,7 @@ const ChatPage = () => {
     setTimeout(() => {
       const timeNow = Date.now();
       if (timeNow - lastTypingTime >= timerLength && typing) {
-        socketRef.current?.emit("stop typing", chat._id);
+        socketRef.current?.emit("stop typing", { room: chat._id, user });
         setTyping(false);
       }
     }, timerLength);
@@ -371,7 +374,7 @@ const ChatPage = () => {
                     ))}
                     {isTyping && (
                       <div className="typing-indicator">
-                        <em>Typing...</em>
+                        <em>{isTyping}</em>
                       </div>
                     )}
                   </ScrollableFeed>

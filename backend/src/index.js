@@ -49,12 +49,12 @@ io.on("connection", (socket) => {
   });
 
   // Typing indicator
-  socket.on("typing", (room) => {
-    socket.to(room).emit("typing");
+  socket.on("typing", ({ room, user }) => {
+    socket.to(room).emit("typing", user);
   });
 
-  socket.on("stop typing", (room) => {
-    socket.to(room).emit("stop typing");
+  socket.on("stop typing", ({ room, user }) => {
+    socket.to(room).emit("stop typing", user);
   });
 
   // New message
