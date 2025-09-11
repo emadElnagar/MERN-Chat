@@ -55,8 +55,6 @@ const ChatPage = () => {
     newSocket.emit("setup", user);
 
     newSocket.on("connected", () => setSocketConnected(true));
-    newSocket.on("typing", () => setIsTyping(true));
-    newSocket.on("stop typing", () => setIsTyping(false));
     newSocket.on("error", (err) => {
       console.error("Socket error:", err);
       alert.error("Socket connection failed. Please try again later.");
@@ -147,23 +145,30 @@ const ChatPage = () => {
 
     const socket = socketRef.current;
 
+    // Typing
     socket.on("typing", (typingUser) => {
       if (typingUser._id !== user._id) {
         setIsTyping(`${typingUser.firstName} is typing...`);
       }
     });
 
+    // Stop typing
     socket.on("stop typing", (typingUser) => {
       if (typingUser._id !== user._id) {
         setIsTyping(false);
       }
     });
 
+    // New message received
+    socket.on("message received", (newMessage) => {
+      dispatch(getMessages(newMessage.chat._id));
+    });
+
     return () => {
       socket.off("typing");
       socket.off("stop typing");
     };
-  }, [user]);
+  }, [dispatch, user]);
 
   // Typing handler
   const typingHandler = (e) => {

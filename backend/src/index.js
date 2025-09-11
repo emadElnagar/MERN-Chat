@@ -53,6 +53,7 @@ io.on("connection", (socket) => {
     socket.to(room).emit("typing", user);
   });
 
+  // Stop typing indicator
   socket.on("stop typing", ({ room, user }) => {
     socket.to(room).emit("stop typing", user);
   });
