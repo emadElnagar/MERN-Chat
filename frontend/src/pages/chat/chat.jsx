@@ -146,15 +146,21 @@ const ChatPage = () => {
     const socket = socketRef.current;
 
     // Typing
-    socket.on("typing", (typingUser) => {
-      if (typingUser._id !== user._id) {
+    socket.on("typing", ({ room, user: typingUser }) => {
+      if (
+        typingUser._id !== user._id &&
+        selectedChatRef.current?._id === room
+      ) {
         setIsTyping(`${typingUser.firstName} is typing...`);
       }
     });
 
     // Stop typing
-    socket.on("stop typing", (typingUser) => {
-      if (typingUser._id !== user._id) {
+    socket.on("stop typing", ({ room, user: typingUser }) => {
+      if (
+        typingUser._id !== user._id &&
+        selectedChatRef.current?._id === room
+      ) {
         setIsTyping(false);
       }
     });
@@ -167,6 +173,7 @@ const ChatPage = () => {
     return () => {
       socket.off("typing");
       socket.off("stop typing");
+      socket.off("message received");
     };
   }, [dispatch, user]);
 
