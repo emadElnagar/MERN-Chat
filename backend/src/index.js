@@ -5,6 +5,7 @@ import userRouter from "./routes/userRoutes.js";
 import chatRouter from "./routes/chatRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
+import Message from "./models/Message.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -72,6 +73,28 @@ io.on("connection", (socket) => {
       .forEach((u) => {
         socket.to(u._id).emit("message received", newMessageReceived);
       });
+  });
+
+  // Message seen/read event
+  socket.on("message read", async ({ messageId, userId }) => {
+    const message = await Message.findById(messageId);
+
+    if (!message) return;
+
+    // Prevent sender from being added
+    if (message.sender.toString() === userId.toString()) {
+      return;
+    }
+
+    if (!message.readBy.includes(userId)) {
+      message.readBy.push(userId);
+      await message.save();
+    }
+
+    await message.populate("readBy", "firstName lastName image");
+
+    // Notify others in the chat
+    socket.to(message.chat.toString()).emit("message read", message);
   });
 
   // Disconnect event

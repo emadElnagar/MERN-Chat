@@ -170,12 +170,23 @@ const ChatPage = () => {
       dispatch(getMessages(newMessage.chat._id));
     });
 
+    // Read message
+    messages.forEach((msg) => {
+      if (!msg.readBy.includes(user._id)) {
+        socketRef.current.emit("message read", {
+          messageId: msg._id,
+          userId: user._id,
+        });
+      }
+    });
+
     return () => {
       socket.off("typing");
       socket.off("stop typing");
       socket.off("message received");
+      socket.off("message read");
     };
-  }, [dispatch, user]);
+  }, [dispatch, messages, user]);
 
   // Typing handler
   const typingHandler = (e) => {
