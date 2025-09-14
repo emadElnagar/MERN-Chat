@@ -297,21 +297,23 @@ a {
     }
   }
   .current-chat {
+    --dimension: 40px;
+    --space: 5px;
     width: 75%;
     .chat-window {
       height: calc(100vh - 90px);
       padding: 20px 0;
       .message {
-        margin: 5px;
+        margin: var(--space);
       }
       .message-received {
         display: flex;
-        max-width: calc(100% - 50px);
+        max-width: calc(100% - var(--dimension));
         img {
-          width: 50px;
-          height: 50px;
+          width: var(--dimension);
+          height: var(--dimension);
           border-radius: 50%;
-          margin-inline-end: 5px;
+          margin-inline-end: var(--space);
         }
         .message-content {
           background: var(--info);
@@ -327,6 +329,9 @@ a {
           background: #5f99ae;
           border-radius: 14px 14px 0 14px;
         }
+      }
+      .spaced-message {
+        margin-inline-start: calc(var(--dimension) + var(--space) * 2);
       }
       .message-content {
         padding: 10px;

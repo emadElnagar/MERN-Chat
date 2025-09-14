@@ -372,29 +372,43 @@ const ChatPage = () => {
               <>
                 <div className="chat-window">
                   <ScrollableFeed>
-                    {messages?.map((m) => (
-                      <div
-                        className={
-                          m.sender._id === user._id
-                            ? "message message-sent"
-                            : "message message-received"
-                        }
-                        key={m._id}
-                      >
-                        {m.sender._id !== user._id && (
-                          <img
-                            src={
-                              m.sender.image
-                                ? `${import.meta.env.VITE_URL}/` +
-                                  m.sender.image
-                                : UserAvatar
-                            }
-                            alt="User"
-                          />
-                        )}
-                        <p className="message-content">{m.content}</p>
-                      </div>
-                    ))}
+                    {messages?.map((message, index) => {
+                      const isOwnMessage = message.sender._id === user._id;
+                      const nextMessage = messages[index + 1];
+                      const isLastFromSender =
+                        !nextMessage ||
+                        nextMessage.sender._id !== message.sender._id;
+
+                      return (
+                        <div
+                          className={`${
+                            isOwnMessage
+                              ? "message message-sent"
+                              : "message message-received"
+                          } ${
+                            !isOwnMessage && !isLastFromSender
+                              ? "spaced-message"
+                              : ""
+                          }`}
+                          key={message._id}
+                        >
+                          {!isOwnMessage && isLastFromSender && (
+                            <img
+                              src={
+                                message.sender.image
+                                  ? `${import.meta.env.VITE_URL}/${
+                                      message.sender.image
+                                    }`
+                                  : UserAvatar
+                              }
+                              alt="User"
+                            />
+                          )}
+                          <p className="message-content">{message.content}</p>
+                        </div>
+                      );
+                    })}
+
                     {isTyping && (
                       <div className="typing-indicator">
                         <em>{isTyping}</em>
