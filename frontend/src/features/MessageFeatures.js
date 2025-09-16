@@ -51,7 +51,21 @@ export const getMessages = createAsyncThunk(
 const messageSlice = createSlice({
   name: "message",
   initialState,
-  reducers: {},
+  reducers: {
+    // Update read by users for a message
+    updateReadBy: (state, action) => {
+      const updatedMessage = action.payload;
+      const index = state.messages.findIndex(
+        (msg) => msg._id === updatedMessage._id
+      );
+      if (index !== -1) {
+        state.messages[index] = {
+          ...state.messages[index],
+          readBy: updatedMessage.readBy,
+        };
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       // new message

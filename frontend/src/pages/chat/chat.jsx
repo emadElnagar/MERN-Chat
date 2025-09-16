@@ -17,6 +17,7 @@ import { FaPlus, FaMinus } from "react-icons/fa6";
 import { GetFriends } from "../../features/UserFeatures";
 import { useAlert } from "react-alert";
 import { io } from "socket.io-client";
+import { IoCheckmarkDone } from "react-icons/io5";
 
 const ENDPOINT = `${import.meta.env.VITE_URL}`;
 
@@ -167,7 +168,20 @@ const ChatPage = () => {
 
     // New message received
     socket.on("message received", (newMessage) => {
-      dispatch(getMessages(newMessage.chat._id));
+      // Refresh messages if user is already inside this chat
+      if (selectedChatRef.current?._id === newMessage.chat._id) {
+        dispatch(getMessages(newMessage.chat._id));
+      }
+    });
+
+    // Message seen/read
+    socket.on("message read", (updatedMessage) => {
+      if (selectedChatRef.current?._id === updatedMessage.chat.toString()) {
+        dispatch({
+          type: "message/updateReadBy",
+          payload: updatedMessage,
+        });
+      }
     });
 
     // Read message
@@ -379,6 +393,12 @@ const ChatPage = () => {
                         !nextMessage ||
                         nextMessage.sender._id !== message.sender._id;
 
+                      const lastMessage = messages[messages.length - 1];
+                      const isLastMessageSeen =
+                        lastMessage?.sender._id === user._id
+                          ? (lastMessage.readBy?.length ?? 0) > 0
+                          : false;
+
                       return (
                         <div
                           className={`${
@@ -404,7 +424,16 @@ const ChatPage = () => {
                               alt="User"
                             />
                           )}
-                          <p className="message-content">{message.content}</p>
+                          <div className="message-bubble">
+                            <p className="message-content">{message.content}</p>
+                            {isOwnMessage &&
+                              message._id === lastMessage?._id &&
+                              isLastMessageSeen && (
+                                <span className="seen-status">
+                                  <IoCheckmarkDone />
+                                </span>
+                              )}
+                          </div>
                         </div>
                       );
                     })}

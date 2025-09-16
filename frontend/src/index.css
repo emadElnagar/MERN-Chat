@@ -337,6 +337,15 @@ a {
         padding: 10px;
         text-align: start;
       }
+      .message-bubble {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        .seen-status {
+          color: #08cb00;
+          margin-top: 2px;
+        }
+      }
     }
     .chat-form {
       width: calc(100% - 60px);
