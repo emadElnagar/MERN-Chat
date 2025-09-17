@@ -393,12 +393,6 @@ const ChatPage = () => {
                         !nextMessage ||
                         nextMessage.sender._id !== message.sender._id;
 
-                      const lastMessage = messages[messages.length - 1];
-                      const isLastMessageSeen =
-                        lastMessage?.sender._id === user._id
-                          ? (lastMessage.readBy?.length ?? 0) > 0
-                          : false;
-
                       return (
                         <div
                           className={`${
@@ -426,13 +420,11 @@ const ChatPage = () => {
                           )}
                           <div className="message-bubble">
                             <p className="message-content">{message.content}</p>
-                            {isOwnMessage &&
-                              message._id === lastMessage?._id &&
-                              isLastMessageSeen && (
-                                <span className="seen-status">
-                                  <IoCheckmarkDone />
-                                </span>
-                              )}
+                            {isOwnMessage && message.readBy.length > 0 && (
+                              <span className="seen-status">
+                                <IoCheckmarkDone />
+                              </span>
+                            )}
                           </div>
                         </div>
                       );
