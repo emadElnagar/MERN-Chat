@@ -23,46 +23,51 @@ const generateToken = (user) => {
 
 // User register
 export const userRegister = async (req, res) => {
-  const takenEmail = await User.findOne({ email: req.body.email });
-  if (takenEmail) {
-    return res.status(401).json({
-      message: "This email have already taken, please try another one",
+  try {
+    const takenEmail = await User.findOne({ email: req.body.email });
+    if (takenEmail) {
+      return res.status(401).json({
+        message: "This email have already taken, please try another one",
+      });
+    }
+    const user = new User({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      password: await bcrypt.hash(req.body.password, 10),
+    });
+    const token = generateToken(user);
+    await user.save();
+    res.status(200).json({
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
     });
   }
-  const user = new User({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    password: await bcrypt.hash(req.body.password, 10),
-  });
-  const token = generateToken(user);
-  await user
-    .save()
-    .then((_user) => {
-      res.status(200).json({
-        token,
-      });
-    })
-    .catch((error) => {
-      res.status(201).json({
-        message: error.message,
-      });
-    });
 };
 
 // User login
 export const userLogin = async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
-  if (user) {
-    if (bcrypt.compareSync(req.body.password, user.password)) {
-      const token = generateToken(user);
-      res.status(200).json({
-        token,
-      });
-      return;
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
     }
+    const validate = await bcrypt.compare(req.body.password, user.password);
+    if (!validate) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    const token = generateToken(user);
+    res.status(200).json({
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
-  res.status(401).send({ message: "invalid email or password" });
 };
 
 // Get all users
@@ -71,7 +76,7 @@ export const GetAllUsers = async (_req, res) => {
     const users = await User.find().select("-password");
     res.status(200).json(users);
   } catch (error) {
-    res.status(401).json({
+    res.status(500).json({
       message: error.message,
     });
   }
@@ -83,7 +88,7 @@ export const GetSingleUser = async (req, res) => {
     const user = await User.findOne({ _id: req.params.id }).select("-password");
     res.status(200).json(user);
   } catch (error) {
-    res.status(401).json({
+    res.status(500).json({
       message: error.message,
     });
   }
@@ -91,8 +96,13 @@ export const GetSingleUser = async (req, res) => {
 
 // Change user Password
 export const ChangePassword = async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (user) {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "Not authorized, user not found" });
+    }
     const validate = await bcrypt.compare(
       req.body.currentPassword,
       user.password
@@ -103,49 +113,57 @@ export const ChangePassword = async (req, res) => {
       });
     }
     const newUser = { password: await bcrypt.hash(req.body.newPassword, 10) };
-    User.updateOne({ _id: req.params.id }, { $set: newUser })
-      .then((_result) => {
-        res.status(200).json({
-          message: "Password changed successfully",
-        });
-      })
-      .catch((error) => {
-        res.status(401).json({
-          message: error.message,
-        });
-      });
+    await User.updateOne({ _id: user._id }, { $set: newUser });
+    res.status(200).json({
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
 // Change user image
 export const ChangeUserImg = async (req, res) => {
-  const newUser = { image: req.file.filename };
-  User.updateOne({ _id: req.params.id }, { $set: newUser })
-    .then((_result) => {
-      res.status(200).json({
-        message: "User image changed successfully",
-      });
-    })
-    .catch((error) => {
-      res.status(401).json({
-        message: error.message,
-      });
+  try {
+    const user = req.user;
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "Not authorized, user not found" });
+    }
+    const newUser = { image: req.file.filename };
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    await User.updateOne({ _id: user._id }, { $set: newUser });
+    res.status(200).json({
+      message: "User image changed successfully",
     });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
 
-// Delete user
+// Delete user (Admin only)
 export const DeleteUser = async (req, res) => {
-  User.deleteOne({ _id: req.params.id })
-    .then((_result) => {
-      res.status(201).json({
-        message: "User Deleted Successfully",
-      });
-    })
-    .catch((error) => {
-      res.status(401).json({
-        message: "Error Deleting User" + error.message,
-      });
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    await User.deleteOne({ _id: req.params.id });
+    res.status(200).json({
+      message: "User Deleted Successfully",
     });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
 
 // Search user
