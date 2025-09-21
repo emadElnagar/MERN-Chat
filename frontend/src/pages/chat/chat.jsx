@@ -18,6 +18,7 @@ import { GetFriends } from "../../features/UserFeatures";
 import { useAlert } from "react-alert";
 import { io } from "socket.io-client";
 import { IoCheckmarkDone } from "react-icons/io5";
+import { updateLastMessage } from "../../features/ChatFeatures";
 
 const ENDPOINT = `${import.meta.env.VITE_URL}`;
 
@@ -94,8 +95,9 @@ const ChatPage = () => {
       const res = await dispatch(newMessage(messageData)).unwrap();
       setMessage("");
       socketRef.current?.emit("new message", res);
+      // update sidebar last message
+      dispatch(updateLastMessage({ chatId: chat._id, lastMessage: res }));
     } catch (err) {
-      console.error("Failed to send message:", err);
       alert.error("Failed to send message");
     }
   };
@@ -172,6 +174,13 @@ const ChatPage = () => {
       if (selectedChatRef.current?._id === newMessage.chat._id) {
         dispatch(getMessages(newMessage.chat._id));
       }
+      // update sidebar last message
+      dispatch(
+        updateLastMessage({
+          chatId: newMessage.chat._id,
+          lastMessage: newMessage,
+        })
+      );
     });
 
     // Message seen/read

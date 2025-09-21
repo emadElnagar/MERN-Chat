@@ -139,7 +139,16 @@ export const RemoveUser = createAsyncThunk(
 const chatSlice = createSlice({
   name: "chat",
   initialState,
-  reducers: {},
+  reducers: {
+    // update last message in chat list
+    updateLastMessage: (state, action) => {
+      const { chatId, lastMessage } = action.payload;
+      const chat = state.chats.find((c) => c._id === chatId);
+      if (chat) {
+        chat.lastMessage = lastMessage;
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch chats
@@ -223,4 +232,5 @@ const chatSlice = createSlice({
   },
 });
 
+export const { updateLastMessage } = chatSlice.actions;
 export default chatSlice.reducer;
