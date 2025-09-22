@@ -335,15 +335,24 @@ a {
       }
       .message-content {
         padding: 10px;
+        font-size: 14px;
         text-align: start;
+        display: inline-block;
       }
       .message-bubble {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        position: relative;
+        display: inline-block;
+        max-width: 90%;
+        &.with-seen {
+          .message-content {
+            padding: 10px 10px 10px 25px;
+          }
+        }
         .seen-status {
+          position: absolute;
+          bottom: 4px;
+          left: 6px;
           color: #08cb00;
-          margin-top: 2px;
         }
       }
     }

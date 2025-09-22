@@ -427,7 +427,13 @@ const ChatPage = () => {
                               alt="User"
                             />
                           )}
-                          <div className="message-bubble">
+                          <div
+                            className={`message-bubble ${
+                              isOwnMessage && message.readBy.length > 0
+                                ? "with-seen"
+                                : ""
+                            }`}
+                          >
                             <p className="message-content">{message.content}</p>
                             {isOwnMessage && message.readBy.length > 0 && (
                               <span className="seen-status">
