@@ -168,21 +168,6 @@ const ChatPage = () => {
       }
     });
 
-    // New message received
-    socket.on("message received", (newMessage) => {
-      // Refresh messages if user is already inside this chat
-      if (selectedChatRef.current?._id === newMessage.chat._id) {
-        dispatch(getMessages(newMessage.chat._id));
-      }
-      // update sidebar last message
-      dispatch(
-        updateLastMessage({
-          chatId: newMessage.chat._id,
-          lastMessage: newMessage,
-        })
-      );
-    });
-
     // Message seen/read
     socket.on("message read", (updatedMessage) => {
       if (selectedChatRef.current?._id === updatedMessage.chat.toString()) {
@@ -206,7 +191,6 @@ const ChatPage = () => {
     return () => {
       socket.off("typing");
       socket.off("stop typing");
-      socket.off("message received");
       socket.off("message read");
     };
   }, [dispatch, messages, user]);
