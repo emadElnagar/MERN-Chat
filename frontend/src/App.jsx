@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import ChatPage from "./pages/chat/chat";
 import SearchPage from "./pages/users/Search";
 import FriendsPage from "./pages/users/Friends";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { initSocket } from "./socket";
 import { getMessages } from "./features/MessageFeatures";
 import { updateLastMessage } from "./features/ChatFeatures";
@@ -19,6 +19,9 @@ import { useAlert } from "react-alert";
 function App() {
   const { theme } = useSelector((state) => state.theme);
   const { user } = useSelector((state) => state.user);
+
+  const [notifications, setNotifications] = useState([]);
+
   const dispatch = useDispatch();
   const alert = useAlert();
 
@@ -33,20 +36,17 @@ function App() {
 
     // Global "message received" listener
     socket.on("message received", (newMessage) => {
-      const state = store.getState(); // get current redux state
+      const state = store.getState();
       const { chat } = state.chat;
 
       // If user is inside the same chat refresh messages
       if (chat && chat._id === newMessage.chat._id) {
         dispatch(getMessages(newMessage.chat._id));
       } else {
-        alert.show(
-          `${newMessage.sender.firstName}: ${
-            newMessage.content.length > 20
-              ? newMessage.content.slice(0, 20) + "..."
-              : newMessage.content
-          }`
-        );
+        if (!notifications.includes(newMessage.chat._id)) {
+          setNotifications((prev) => [...prev, newMessage.chat._id]);
+          alert.show("New Message Received!", { type: "info" });
+        }
       }
 
       // Always update sidebar last message
@@ -61,7 +61,7 @@ function App() {
     return () => {
       socket.off("message received");
     };
-  }, [user, dispatch, alert]);
+  }, [user, dispatch, alert, notifications]);
 
   return (
     <div className={`${theme}`}>
