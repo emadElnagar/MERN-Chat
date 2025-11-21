@@ -1,5 +1,32 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import JWT from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
+
+export const generateToken = (user) => {
+  return JWT.sign(
+    {
+      _id: user._id,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "15m",
+    }
+  );
+};
+
+export const generateRefreshToken = (user) => {
+  return JWT.sign(
+    {
+      _id: user._id,
+    },
+    process.env.REFRESH_JWT_SECRET,
+    {
+      expiresIn: "7d",
+    }
+  );
+};
 
 export const isAuth = async (req, res, next) => {
   let token;
