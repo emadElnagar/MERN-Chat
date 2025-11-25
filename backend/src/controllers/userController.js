@@ -1,25 +1,9 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
-import JWT from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
-
-// Generate Token
-const generateToken = (user) => {
-  return JWT.sign(
-    {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1h",
-    }
-  );
-};
+import {
+  generateToken,
+  generateRefreshToken,
+} from "../middlewares/authMiddleWare.js";
 
 // User register
 export const userRegister = async (req, res) => {
@@ -59,10 +43,20 @@ export const userLogin = async (req, res) => {
     if (!validate) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-    const token = generateToken(user);
-    res.status(200).json({
-      token,
+
+    // Generate tokens
+    const accessToken = generateToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+    const { password, ...userData } = user.toObject();
+    res.status(200).json({ userData, accessToken });
   } catch (error) {
     res.status(500).json({
       message: error.message,
