@@ -2,11 +2,30 @@
 export const signupValidation = (req, res, next) => {
   const { firstName, lastName, email, password } = req.body;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const fNamehasNumbers = /\d/.test(firstName);
+  const lNamehasNumbers = /\d/.test(lastName);
 
-  if (!firstName || !lastName) {
+  if (
+    !firstName ||
+    firstName.trim() === "" ||
+    !lastName ||
+    !lastName.trim() === ""
+  ) {
     return res
       .status(401)
       .json({ message: "First name and last name are required" });
+  }
+
+  if (fNamehasNumbers) {
+    return res
+      .status(401)
+      .json({ message: "First name should not contain numbers" });
+  }
+
+  if (lNamehasNumbers) {
+    return res
+      .status(401)
+      .json({ message: "Last name should not contain numbers" });
   }
 
   if (!email || !emailRegex.test(email)) {
