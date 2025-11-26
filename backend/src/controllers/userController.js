@@ -8,23 +8,34 @@ import {
 // User register
 export const userRegister = async (req, res) => {
   try {
+    const { firstName, lastName, email, password } = req.body;
     const takenEmail = await User.findOne({ email: req.body.email });
     if (takenEmail) {
       return res.status(401).json({
         message: "This email have already taken, please try another one",
       });
     }
+
     const user = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: await bcrypt.hash(req.body.password, 10),
+      firstName,
+      lastName,
+      email,
+      password: await bcrypt.hash(password, 10),
     });
-    const token = generateToken(user);
+
+    // Generate tokens
+    const accessToken = generateToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     await user.save();
-    res.status(200).json({
-      token,
-    });
+    res.status(200).json(accessToken);
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -55,8 +66,7 @@ export const userLogin = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    const { password, ...userData } = user.toObject();
-    res.status(200).json({ userData, accessToken });
+    res.status(200).json(accessToken);
   } catch (error) {
     res.status(500).json({
       message: error.message,

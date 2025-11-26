@@ -16,12 +16,13 @@ import {
   GetFriends,
   RemoveFriend,
 } from "../controllers/userController.js";
+import { signupValidation } from "../validations/userValidations.js";
 import { isAuth } from "../middlewares/authMiddleWare.js";
 
 const userRouter = Router();
 
 // User register
-userRouter.post("/register", userRegister);
+userRouter.post("/register", signupValidation, userRegister);
 
 // User login
 userRouter.post("/login", userLogin);
