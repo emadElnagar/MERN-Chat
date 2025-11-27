@@ -98,6 +98,23 @@ export const GetSingleUser = async (req, res) => {
   }
 };
 
+// Get me (Current user)
+export const GetMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "Not authorized, user not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 // Change user Password
 export const ChangePassword = async (req, res) => {
   try {

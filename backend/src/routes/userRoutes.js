@@ -15,6 +15,7 @@ import {
   CancelFriendRequest,
   GetFriends,
   RemoveFriend,
+  GetMe,
 } from "../controllers/userController.js";
 import { signupValidation } from "../validations/userValidations.js";
 import { isAuth } from "../middlewares/authMiddleWare.js";
@@ -32,6 +33,9 @@ userRouter.get("/all", GetAllUsers);
 
 // Get single user
 userRouter.get("/profile/:id", GetSingleUser);
+
+// Get me (current user)
+userRouter.get("/me", isAuth, GetMe);
 
 // Change user password
 userRouter.post("/:id/resetpassword", ChangePassword);
