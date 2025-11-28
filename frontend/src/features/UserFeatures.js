@@ -51,6 +51,25 @@ export const Logout = createAsyncThunk("users/logout", async () => {
   sessionStorage.removeItem("token");
 });
 
+// Get me
+export const GetMe = createAsyncThunk(
+  "users/me",
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { token } = getState().user;
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.get(`${url}/me`, config);
+      return response.data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
 // Get single user
 export const GetSingleUser = createAsyncThunk(
   "users/profile",
@@ -274,6 +293,20 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.error = null;
         state.user = null;
+      })
+      // Get me
+      .addCase(GetMe.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(GetMe.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.user = action.payload;
+      })
+      .addCase(GetMe.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
       })
       // Get single user
       .addCase(GetSingleUser.pending, (state) => {
