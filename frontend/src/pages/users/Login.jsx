@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { BiSolidShow, BiSolidHide } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { Login } from "../../features/UserFeatures";
+import { GetMe, Login } from "../../features/UserFeatures";
 import LoadingScreen from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 
@@ -14,9 +14,12 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { user, isLoading, error } = useSelector((state) => state.user);
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    dispatch(Login({ email, password }));
+    const result = await dispatch(Login({ email, password }));
+    if (Login.fulfilled.match(result)) {
+      dispatch(GetMe());
+    }
   };
   if (user) {
     navigate("/");
