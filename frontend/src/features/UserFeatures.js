@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 const url = import.meta.env.VITE_AUTH_URL;
@@ -21,9 +20,7 @@ export const SignUp = createAsyncThunk(
   async (user, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${url}/register`, user);
-      const data = jwtDecode(response.data.token);
-      sessionStorage.setItem("userInfo", JSON.stringify(data));
-      sessionStorage.setItem("token", response.data.token);
+      const data = response.data;
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -260,12 +257,12 @@ const userSlice = createSlice({
       // User register
       .addCase(SignUp.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(SignUp.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
-        state.users.push(action.payload);
-        state.user = action.payload;
+        state.token = action.payload;
       })
       .addCase(SignUp.rejected, (state, action) => {
         state.isLoading = false;
