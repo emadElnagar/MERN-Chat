@@ -172,10 +172,6 @@ export const ChangeUserImg = async (req, res) => {
 // Delete user (Admin only)
 export const DeleteUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
     await User.deleteOne({ _id: req.params.id });
     res.status(200).json({
       message: "User Deleted Successfully",

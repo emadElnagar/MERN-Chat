@@ -21,7 +21,7 @@ import {
   ChangePasswordValidation,
   signupValidation,
 } from "../validations/userValidations.js";
-import { isAuth } from "../middlewares/authMiddleWare.js";
+import { isAdmin, isAuth } from "../middlewares/authMiddleWare.js";
 
 const userRouter = Router();
 
@@ -44,10 +44,15 @@ userRouter.get("/me", isAuth, GetMe);
 userRouter.post("/:id/resetpassword", ChangePasswordValidation, ChangePassword);
 
 // Change user image
-userRouter.post("/:id/image/change", upload.single("file"), ChangeUserImg);
+userRouter.post(
+  "/:id/image/change",
+  isAuth,
+  upload.single("file"),
+  ChangeUserImg
+);
 
 // Delete user
-userRouter.delete("/:id/delete", DeleteUser);
+userRouter.delete("/:id/delete", isAuth, isAdmin, DeleteUser);
 
 // Search user
 userRouter.get("/", isAuth, SearchUser);
