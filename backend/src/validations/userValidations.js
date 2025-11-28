@@ -56,3 +56,18 @@ export const signupValidation = (req, res, next) => {
 
   next();
 };
+
+export const ChangePasswordValidation = (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return res
+      .status(401)
+      .json({ message: "Old password and new password are required" });
+  }
+  if (newPassword.length < 6) {
+    return res
+      .status(401)
+      .json({ message: "New password must be at least 6 characters long" });
+  }
+};

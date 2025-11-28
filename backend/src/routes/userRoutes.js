@@ -17,7 +17,10 @@ import {
   RemoveFriend,
   GetMe,
 } from "../controllers/userController.js";
-import { signupValidation } from "../validations/userValidations.js";
+import {
+  ChangePasswordValidation,
+  signupValidation,
+} from "../validations/userValidations.js";
 import { isAuth } from "../middlewares/authMiddleWare.js";
 
 const userRouter = Router();
@@ -38,7 +41,7 @@ userRouter.get("/profile/:id", GetSingleUser);
 userRouter.get("/me", isAuth, GetMe);
 
 // Change user password
-userRouter.post("/:id/resetpassword", ChangePassword);
+userRouter.post("/:id/resetpassword", ChangePasswordValidation, ChangePassword);
 
 // Change user image
 userRouter.post("/:id/image/change", upload.single("file"), ChangeUserImg);
