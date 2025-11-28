@@ -8,6 +8,7 @@ const initialState = {
   users: [],
   searchedUsers: [],
   friendsList: [],
+  token: null,
   user: null,
   profile: null,
   isLoading: false,
@@ -36,9 +37,7 @@ export const Login = createAsyncThunk(
   async (user, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${url}/login`, user);
-      const data = jwtDecode(response.data.token);
-      sessionStorage.setItem("userInfo", JSON.stringify(data));
-      sessionStorage.setItem("token", response.data.token);
+      const data = response.data;
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -256,11 +255,12 @@ const userSlice = createSlice({
       // User login
       .addCase(Login.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(Login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
-        state.user = action.payload;
+        state.token = action.payload;
       })
       .addCase(Login.rejected, (state, action) => {
         state.isLoading = false;
