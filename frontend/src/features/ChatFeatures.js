@@ -24,7 +24,11 @@ export const FetchChats = createAsyncThunk(
       const response = await axios.get(`${url}`, config);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -43,7 +47,11 @@ export const FetchSingleChat = createAsyncThunk(
       const response = await axios.get(`${url}/${chatId}`, config);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -62,7 +70,11 @@ export const CreateChat = createAsyncThunk(
       const response = await axios.post(`${url}`, chatData, config);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -85,7 +97,11 @@ export const RenameChat = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -108,7 +124,11 @@ export const AddUser = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -131,7 +151,11 @@ export const RemoveUser = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -154,6 +178,7 @@ const chatSlice = createSlice({
       // Fetch chats
       .addCase(FetchChats.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(FetchChats.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -167,6 +192,7 @@ const chatSlice = createSlice({
       // Fetch single chat
       .addCase(FetchSingleChat.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(FetchSingleChat.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -180,6 +206,7 @@ const chatSlice = createSlice({
       // Create chat
       .addCase(CreateChat.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(CreateChat.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -193,6 +220,7 @@ const chatSlice = createSlice({
       // Rename chat
       .addCase(RenameChat.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(RenameChat.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -206,6 +234,7 @@ const chatSlice = createSlice({
       // Add user to caht
       .addCase(AddUser.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(AddUser.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -219,6 +248,7 @@ const chatSlice = createSlice({
       // remove user from caht
       .addCase(RemoveUser.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(RemoveUser.fulfilled, (state, action) => {
         state.isLoading = false;

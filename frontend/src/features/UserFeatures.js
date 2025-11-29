@@ -23,7 +23,11 @@ export const SignUp = createAsyncThunk(
       const data = response.data;
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -37,7 +41,11 @@ export const Login = createAsyncThunk(
       const data = response.data;
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -62,7 +70,11 @@ export const GetMe = createAsyncThunk(
       const response = await axios.get(`${url}/me`, config);
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -75,7 +87,11 @@ export const GetSingleUser = createAsyncThunk(
       const response = await axios.get(`${url}/profile/${id}`);
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -90,7 +106,11 @@ export const ChagneUserImage = createAsyncThunk(
         data.formdata
       );
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -109,7 +129,11 @@ export const SearchUsers = createAsyncThunk(
       const response = await axios.get(`${url}?search=${keyword}`, config);
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -128,7 +152,11 @@ export const GetFriends = createAsyncThunk(
       const response = await axios.get(`${url}/friends`, config);
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -151,7 +179,11 @@ export const AddFriend = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -174,7 +206,11 @@ export const CancelRequest = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -197,7 +233,11 @@ export const AcceptRequest = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -220,7 +260,11 @@ export const RejectRequest = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -243,7 +287,11 @@ export const Unfriend = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -285,6 +333,7 @@ const userSlice = createSlice({
       // User logout
       .addCase(Logout.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(Logout.fulfilled, (state) => {
         state.isLoading = false;
@@ -308,6 +357,7 @@ const userSlice = createSlice({
       // Get single user
       .addCase(GetSingleUser.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(GetSingleUser.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -321,6 +371,7 @@ const userSlice = createSlice({
       // Change user image
       .addCase(ChagneUserImage.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(ChagneUserImage.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -341,6 +392,7 @@ const userSlice = createSlice({
       // Search user
       .addCase(SearchUsers.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(SearchUsers.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -354,6 +406,7 @@ const userSlice = createSlice({
       // Get friends
       .addCase(GetFriends.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(GetFriends.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -367,6 +420,7 @@ const userSlice = createSlice({
       // Add new friend
       .addCase(AddFriend.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(AddFriend.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -380,6 +434,7 @@ const userSlice = createSlice({
       // Cancel friend request
       .addCase(CancelRequest.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(CancelRequest.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -393,6 +448,7 @@ const userSlice = createSlice({
       // Accept friend request
       .addCase(AcceptRequest.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(AcceptRequest.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -407,6 +463,7 @@ const userSlice = createSlice({
       // Reject friend request
       .addCase(RejectRequest.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(RejectRequest.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -419,6 +476,7 @@ const userSlice = createSlice({
       // Unfriend
       .addCase(Unfriend.pending, (state) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(Unfriend.fulfilled, (state, action) => {
         state.isLoading = false;

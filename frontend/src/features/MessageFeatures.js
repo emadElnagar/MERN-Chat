@@ -24,7 +24,11 @@ export const newMessage = createAsyncThunk(
       const response = await axios.post(`${url}`, messageData, config);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
@@ -43,7 +47,11 @@ export const getMessages = createAsyncThunk(
       const response = await axios.get(`${url}/${id}`, config);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
     }
   }
 );
