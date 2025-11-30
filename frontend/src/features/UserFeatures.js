@@ -120,7 +120,7 @@ export const SearchUsers = createAsyncThunk(
   "users/search",
   async (keyword, { rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ export const GetFriends = createAsyncThunk(
   "users/friends",
   async (_, rejectWithValue) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -166,7 +166,7 @@ export const AddFriend = createAsyncThunk(
   "users/addFriend",
   async (id, { rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -193,7 +193,7 @@ export const CancelRequest = createAsyncThunk(
   "users/cancelRequest",
   async (id, { rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -220,7 +220,7 @@ export const AcceptRequest = createAsyncThunk(
   "users/acceptRequest",
   async (id, { rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -247,7 +247,7 @@ export const RejectRequest = createAsyncThunk(
   "users/rejectRequest",
   async (id, { rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -274,7 +274,7 @@ export const Unfriend = createAsyncThunk(
   "users/remove",
   async (id, { rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
