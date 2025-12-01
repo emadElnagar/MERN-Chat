@@ -118,7 +118,7 @@ export const ChagneUserImage = createAsyncThunk(
 // Search user
 export const SearchUsers = createAsyncThunk(
   "users/search",
-  async (keyword, { rejectWithValue }) => {
+  async (keyword, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().user;
       const config = {
@@ -141,7 +141,7 @@ export const SearchUsers = createAsyncThunk(
 // Get friends
 export const GetFriends = createAsyncThunk(
   "users/friends",
-  async (_, rejectWithValue) => {
+  async (getState, rejectWithValue) => {
     try {
       const { token } = getState().user;
       const config = {
@@ -164,7 +164,7 @@ export const GetFriends = createAsyncThunk(
 // Add new friend
 export const AddFriend = createAsyncThunk(
   "users/addFriend",
-  async (id, { rejectWithValue }) => {
+  async (id, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().user;
       const config = {
@@ -191,7 +191,7 @@ export const AddFriend = createAsyncThunk(
 // Cancel friend request
 export const CancelRequest = createAsyncThunk(
   "users/cancelRequest",
-  async (id, { rejectWithValue }) => {
+  async (id, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().user;
       const config = {
@@ -218,7 +218,7 @@ export const CancelRequest = createAsyncThunk(
 // Accept friend request
 export const AcceptRequest = createAsyncThunk(
   "users/acceptRequest",
-  async (id, { rejectWithValue }) => {
+  async (id, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().user;
       const config = {
@@ -245,7 +245,7 @@ export const AcceptRequest = createAsyncThunk(
 // Reject friend request
 export const RejectRequest = createAsyncThunk(
   "users/rejectRequest",
-  async (id, { rejectWithValue }) => {
+  async (id, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().user;
       const config = {
@@ -272,7 +272,7 @@ export const RejectRequest = createAsyncThunk(
 // Unfriend (Remove friend)
 export const Unfriend = createAsyncThunk(
   "users/remove",
-  async (id, { rejectWithValue }) => {
+  async (id, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().user;
       const config = {

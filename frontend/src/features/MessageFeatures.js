@@ -13,9 +13,9 @@ const initialState = {
 // Create message
 export const newMessage = createAsyncThunk(
   "message/newMessage",
-  async (messageData, { rejectWithValue }) => {
+  async (messageData, { getState, rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -36,9 +36,9 @@ export const newMessage = createAsyncThunk(
 // Get all messages
 export const getMessages = createAsyncThunk(
   "message/getMessages",
-  async (id, { rejectWithValue }) => {
+  async (id, { getState, rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,

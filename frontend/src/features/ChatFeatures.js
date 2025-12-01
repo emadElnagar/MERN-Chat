@@ -13,9 +13,9 @@ const initialState = {
 // Get user chats
 export const FetchChats = createAsyncThunk(
   "chat/FetchChats",
-  async (_, { rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -36,9 +36,9 @@ export const FetchChats = createAsyncThunk(
 // Get single chat
 export const FetchSingleChat = createAsyncThunk(
   "chat/FetchSingleChat",
-  async (chatId, { rejectWithValue }) => {
+  async (chatId, { getState, rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -59,9 +59,9 @@ export const FetchSingleChat = createAsyncThunk(
 // Create chat
 export const CreateChat = createAsyncThunk(
   "chat/CreateChat",
-  async (chatData, { rejectWithValue }) => {
+  async (chatData, { getState, rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -82,9 +82,9 @@ export const CreateChat = createAsyncThunk(
 // Rename chat
 export const RenameChat = createAsyncThunk(
   "chat/RenameChat",
-  async (chat, { rejectWithValue }) => {
+  async (chat, { getState, rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -109,9 +109,9 @@ export const RenameChat = createAsyncThunk(
 // Add user to chat
 export const AddUser = createAsyncThunk(
   "chat/AddUser",
-  async (data, { rejectWithValue }) => {
+  async (data, { getState, rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -136,9 +136,9 @@ export const AddUser = createAsyncThunk(
 // Remove user from chat
 export const RemoveUser = createAsyncThunk(
   "chat/RemoveUser",
-  async (data, { rejectWithValue }) => {
+  async (data, { getState, rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem("token");
+      const { token } = getState().user;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
