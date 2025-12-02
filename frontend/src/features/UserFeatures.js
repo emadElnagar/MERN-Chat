@@ -141,7 +141,7 @@ export const SearchUsers = createAsyncThunk(
 // Get friends
 export const GetFriends = createAsyncThunk(
   "users/friends",
-  async (getState, rejectWithValue) => {
+  async (_, { getState, rejectWithValue }) => {
     try {
       const { token } = getState().user;
       const config = {
