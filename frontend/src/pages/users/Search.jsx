@@ -86,7 +86,7 @@ const SearchPage = () => {
               {isLoading ? (
                 <LoadingScreen />
               ) : error ? (
-                <ErrorBox message={error} />
+                <ErrorBox message={error.message} />
               ) : (
                 searchedUsers &&
                 searchedUsers.users &&

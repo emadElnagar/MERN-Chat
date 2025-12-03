@@ -33,7 +33,7 @@ const LoginPage = () => {
         <LoadingScreen />
       ) : (
         <div className="container center">
-          {error && <ErrorBox message={"Invalid email or password"} />}
+          {error && <ErrorBox message={error.message} />}
           <form className="auth-form" onSubmit={handleLogin}>
             <h3 className="heading">login</h3>
             <div className="field">

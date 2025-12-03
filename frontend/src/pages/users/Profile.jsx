@@ -8,11 +8,14 @@ import LoadingScreen from "../../components/LoadingScreen";
 import { IoCamera } from "react-icons/io5";
 import { AiOutlineClose } from "react-icons/ai";
 import { AiOutlineCheck } from "react-icons/ai";
+import ErrorBox from "../../components/ErrorBox";
 
 const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, profile, isLoading } = useSelector((state) => state.user);
+  const { user, profile, isLoading, error } = useSelector(
+    (state) => state.user
+  );
   const { id } = useParams();
   const [image, setImage] = useState("");
   useEffect(() => {
@@ -42,6 +45,8 @@ const Profile = () => {
       <div className="container center">
         {isLoading ? (
           <LoadingScreen />
+        ) : error ? (
+          <ErrorBox message={error.message} />
         ) : (
           profile && (
             <div className="img-container">
