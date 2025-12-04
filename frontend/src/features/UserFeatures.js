@@ -51,10 +51,21 @@ export const Login = createAsyncThunk(
 );
 
 // User logout
-export const Logout = createAsyncThunk("users/logout", async () => {
-  sessionStorage.removeItem("userInfo");
-  sessionStorage.removeItem("token");
-});
+export const Logout = createAsyncThunk(
+  "users/logout",
+  async (user, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${url}/logout`);
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
+    }
+  }
+);
 
 // Get me
 export const GetMe = createAsyncThunk(
@@ -339,6 +350,10 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.error = null;
         state.user = null;
+      })
+      .addCase(Logout.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
       })
       // Get me
       .addCase(GetMe.pending, (state) => {

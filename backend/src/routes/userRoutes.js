@@ -16,6 +16,7 @@ import {
   GetFriends,
   RemoveFriend,
   GetMe,
+  userLogout,
 } from "../controllers/userController.js";
 import {
   ChangePasswordValidation,
@@ -30,6 +31,9 @@ userRouter.post("/register", signupValidation, userRegister);
 
 // User login
 userRouter.post("/login", userLogin);
+
+// User logout
+userRouter.post("/logout", isAuth, userLogout);
 
 // Get all users
 userRouter.get("/all", GetAllUsers);
