@@ -74,6 +74,22 @@ export const userLogin = async (req, res) => {
   }
 };
 
+// User logout
+export const userLogout = async (_req, res) => {
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 // Get all users
 export const GetAllUsers = async (_req, res) => {
   try {
