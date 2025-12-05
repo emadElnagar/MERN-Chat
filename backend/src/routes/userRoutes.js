@@ -33,7 +33,7 @@ userRouter.post("/register", signupValidation, userRegister);
 userRouter.post("/login", userLogin);
 
 // User logout
-userRouter.post("/logout", isAuth, userLogout);
+userRouter.post("/logout", userLogout);
 
 // Get all users
 userRouter.get("/all", GetAllUsers);
