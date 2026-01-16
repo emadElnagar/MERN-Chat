@@ -199,6 +199,33 @@ export const DeleteUser = async (req, res) => {
   }
 };
 
+// Delete my account
+export const DeleteMyAccount = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "Not authorized, user not found" });
+    }
+    // Delete user
+    await User.deleteOne({ _id: user._id });
+    // Clear refresh token cookie
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+    });
+    res.status(200).json({
+      message: "Your account has been deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 // Search user
 export const SearchUser = async (req, res) => {
   const keyword = req.query.search

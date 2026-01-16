@@ -17,6 +17,7 @@ import {
   RemoveFriend,
   GetMe,
   userLogout,
+  DeleteMyAccount,
 } from "../controllers/userController.js";
 import {
   ChangePasswordValidation,
@@ -57,6 +58,9 @@ userRouter.post(
 
 // Delete user
 userRouter.delete("/:id/delete", isAuth, isAdmin, DeleteUser);
+
+// Delete own account
+userRouter.delete("/delete/me", isAuth, DeleteMyAccount);
 
 // Search user
 userRouter.get("/", isAuth, SearchUser);
