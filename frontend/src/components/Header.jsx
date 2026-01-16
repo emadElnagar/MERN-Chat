@@ -61,7 +61,9 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              <IoSettingsSharp className="icon" title="settings" />
+              <Link to={"/users/settings"}>
+                <IoSettingsSharp className="icon" title="settings" />
+              </Link>
             </li>
           </ul>
         </div>

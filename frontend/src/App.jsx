@@ -15,6 +15,7 @@ import { getMessages } from "./features/MessageFeatures";
 import { updateLastMessage } from "./features/ChatFeatures";
 import store from "./store";
 import { useAlert } from "react-alert";
+import SettingsPage from "./pages/users/Settings";
 
 function App() {
   const { theme } = useSelector((state) => state.theme);
@@ -78,6 +79,7 @@ function App() {
           <Route path="/users/profile/:id" element={<Profile />} />
           <Route path="/users/friends" element={<FriendsPage />} />
           <Route path="/users/search" element={<SearchPage />} />
+          <Route path="/users/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
