@@ -331,6 +331,29 @@ export const Unfriend = createAsyncThunk(
   },
 );
 
+// Delete Account
+export const DeleteAccount = createAsyncThunk(
+  "users/deleteAccount",
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { token } = getState().user;
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.delete(`${url}/delete/me`, config);
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -522,6 +545,21 @@ const userSlice = createSlice({
         state.friendsList.friends.pull(action.payload);
       })
       .addCase(Unfriend.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error;
+      })
+      // Delete Account
+      .addCase(DeleteAccount.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(DeleteAccount.fulfilled, (state) => {
+        state.isLoading = false;
+        state.error = null;
+        state.user = null;
+        state.token = null;
+      })
+      .addCase(DeleteAccount.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error;
       });
