@@ -2,17 +2,23 @@ import { Fragment } from "react/jsx-runtime";
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
-import { GetMe } from "../../features/UserFeatures";
+import { ChangePassword, GetMe } from "../../features/UserFeatures";
 import LoadingBox from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "react-alert";
 
 const SettingsPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const alert = useAlert();
 
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   const { user, isLoading, error } = useSelector((state) => state.user);
   if (!user) {
@@ -22,6 +28,16 @@ const SettingsPage = () => {
   useEffect(() => {
     dispatch(GetMe());
   }, [dispatch]);
+
+  // Change password handler
+  const handleChangePassword = (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmNewPassword) {
+      alert.error(`password and password confirm don't match`);
+      return;
+    }
+    dispatch(ChangePassword({ oldPassword, newPassword }));
+  };
   return (
     <Fragment>
       <Helmet>
@@ -69,18 +85,32 @@ const SettingsPage = () => {
                           &times;
                         </span>
                         <h2 className="modal-heading">Change Password</h2>
-                        <form>
+                        <form onSubmit={handleChangePassword}>
                           <div className="field">
                             <label>Current Password:</label>
-                            <input type="password" name="currentPassword" />
+                            <input
+                              type="password"
+                              name="currentPassword"
+                              onChange={(e) => setOldPassword(e.target.value)}
+                            />
                           </div>
                           <div className="field">
                             <label>New Password:</label>
-                            <input type="password" name="newPassword" />
+                            <input
+                              type="password"
+                              name="newPassword"
+                              onChange={(e) => setNewPassword(e.target.value)}
+                            />
                           </div>
                           <div className="field">
                             <label>Confirm New Password:</label>
-                            <input type="password" name="confirmNewPassword" />
+                            <input
+                              type="password"
+                              name="confirmNewPassword"
+                              onChange={(e) =>
+                                setConfirmNewPassword(e.target.value)
+                              }
+                            />
                           </div>
                           <button type="submit">Update Password</button>
                         </form>
