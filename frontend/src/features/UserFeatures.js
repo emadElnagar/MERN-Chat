@@ -29,7 +29,7 @@ export const SignUp = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // User login
@@ -47,7 +47,7 @@ export const Login = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // User logout
@@ -64,7 +64,7 @@ export const Logout = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // Get me
@@ -87,7 +87,7 @@ export const GetMe = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // Get single user
@@ -104,7 +104,7 @@ export const GetSingleUser = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // Change user image
@@ -112,10 +112,7 @@ export const ChagneUserImage = createAsyncThunk(
   "users/image",
   async (data, { rejectWithValue }) => {
     try {
-      axios.post(
-        `http://localhost:5000/api/users/${data.id}/image/change`,
-        data.formdata
-      );
+      axios.post(`${url}/${data.id}/image/change`, data.formdata);
     } catch (error) {
       const message =
         error.response?.data?.message ||
@@ -123,7 +120,34 @@ export const ChagneUserImage = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
+);
+
+// Change user password
+export const ChangePassword = createAsyncThunk(
+  "users/changePassword",
+  async (data, { getState, rejectWithValue }) => {
+    try {
+      const { token } = getState().user;
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.post(
+        `${url}/${data.id}/resetpassword`,
+        data,
+        config,
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong";
+      return rejectWithValue(message);
+    }
+  },
 );
 
 // Search user
@@ -146,7 +170,7 @@ export const SearchUsers = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // Get friends
@@ -169,7 +193,7 @@ export const GetFriends = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // Add new friend
@@ -186,7 +210,7 @@ export const AddFriend = createAsyncThunk(
       const response = await axios.post(
         `${url}/sendrequest`,
         { receiver: id },
-        config
+        config,
       );
       return response.data;
     } catch (error) {
@@ -196,7 +220,7 @@ export const AddFriend = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // Cancel friend request
@@ -213,7 +237,7 @@ export const CancelRequest = createAsyncThunk(
       const response = await axios.post(
         `${url}/cancelrequest`,
         { receiver: id },
-        config
+        config,
       );
       return response.data;
     } catch (error) {
@@ -223,7 +247,7 @@ export const CancelRequest = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // Accept friend request
@@ -240,7 +264,7 @@ export const AcceptRequest = createAsyncThunk(
       const response = await axios.post(
         `${url}/acceptrequest`,
         { sender: id },
-        config
+        config,
       );
       return response.data;
     } catch (error) {
@@ -250,7 +274,7 @@ export const AcceptRequest = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // Reject friend request
@@ -267,7 +291,7 @@ export const RejectRequest = createAsyncThunk(
       const response = await axios.post(
         `${url}/rejectrequest`,
         { sender: id },
-        config
+        config,
       );
       return response.data;
     } catch (error) {
@@ -277,7 +301,7 @@ export const RejectRequest = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 // Unfriend (Remove friend)
@@ -294,7 +318,7 @@ export const Unfriend = createAsyncThunk(
       const response = await axios.post(
         `${url}/removefriend`,
         { friendId: id },
-        config
+        config,
       );
       return response.data;
     } catch (error) {
@@ -304,7 +328,7 @@ export const Unfriend = createAsyncThunk(
         "Something went wrong";
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
 const userSlice = createSlice({
@@ -396,7 +420,7 @@ const userSlice = createSlice({
         } = action.meta;
         if (_id) {
           state.users = state.users.map((user) =>
-            user._id === _id ? action.payload : user
+            user._id === _id ? action.payload : user,
           );
         }
       })
