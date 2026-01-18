@@ -2,7 +2,11 @@ import { Fragment } from "react/jsx-runtime";
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
-import { ChangePassword, GetMe } from "../../features/UserFeatures";
+import {
+  ChangePassword,
+  DeleteAccount,
+  GetMe,
+} from "../../features/UserFeatures";
 import LoadingBox from "../../components/LoadingScreen";
 import ErrorBox from "../../components/ErrorBox";
 import { useNavigate } from "react-router-dom";
@@ -37,6 +41,10 @@ const SettingsPage = () => {
       return;
     }
     dispatch(ChangePassword({ oldPassword, newPassword }));
+  };
+  // Delete account handler
+  const handleDeleteAccount = () => {
+    dispatch(DeleteAccount());
   };
   return (
     <Fragment>
@@ -139,7 +147,12 @@ const SettingsPage = () => {
                           >
                             Cancel
                           </button>
-                          <button className="delete">Delete</button>
+                          <button
+                            className="delete"
+                            onClick={() => handleDeleteAccount()}
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
                     </div>
